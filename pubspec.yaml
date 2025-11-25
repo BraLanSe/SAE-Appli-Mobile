@@ -1,0 +1,54 @@
+name: bookwise
+description: "Application mobile de recommandation de livres adaptative"
+
+publish_to: 'none' # Package privé
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  sqflite: ^2.2.8+1
+  path: ^1.8.3
+  provider: ^6.0.7
+  shared_preferences: ^2.1.0
+  fl_chart: ^0.60.0
+  google_fonts: ^6.1.0
+  uuid: ^4.5.2  # <-- version mise à jour compatible
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/petit_prince.jpg
+    - assets/images/1984.jpg
+    - assets/images/harry_potter.jpg
+    - assets/images/lotr_communaut.jpg
+    - assets/images/dune.jpg
+    - assets/images/le_hobbit.jpg
+    - assets/images/l_alchimiste.jpg
+    - assets/images/fondation.jpg
+    - assets/images/les_miserables.jpg
+    - assets/images/assassin_royal1.jpg
+    - assets/images/shining.jpg
+    - assets/images/autant_en_emporte_le_vent.jpg
+    - assets/images/les_fleurs_du_mal.jpg
+    - assets/images/la_voleuse_de_livres.jpg
+    - assets/images/le_nom_du_vent.jpg
+    - assets/images/la_horde_du_contrevent.jpg
+    - assets/images/neuromancien.jpg
+    - assets/images/orgueil_et_prejuges.jpg
+    - assets/images/le_parfum.jpg
+    - assets/images/la_ferme_des_animaux.jpg
+    - assets/images/logo.png
+
