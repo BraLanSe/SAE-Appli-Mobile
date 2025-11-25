@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
 import 'utils/data.dart';
-import 'screens/home_screen.dart'; 
 import 'screens/welcome_screen.dart'; 
 
 void main() async {
@@ -37,10 +36,8 @@ class BookwiseApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         fontFamily: 'Roboto',
       ),
-      // Choisis ici quel écran afficher au lancement
-      home: const WelcomeScreen(), // ← l'écran de bienvenue sera affiché au lancement
-      // Si tu veux tester directement HomeScreen, remplace par :
-      // home: const HomeScreen(),
+      
+      home: const WelcomeScreen(), 
     );
   }
 }

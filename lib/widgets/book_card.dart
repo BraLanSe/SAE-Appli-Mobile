@@ -8,9 +8,13 @@ import '../screens/book_detail_screen.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
-  final String heroTag; // Hero animation
+  final String heroTag;
 
-  const BookCard({super.key, required this.book, required this.heroTag});
+  const BookCard({
+    super.key,
+    required this.book,
+    required this.heroTag,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +30,15 @@ class BookCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onTap: () {
-          book.clicks++; // pour recommandations
+          /// Ajout : le clic augmente le score de recommandations
+          book.clicks++;
 
-          // Ajouter dans l'historique
+          /// Ajout dans l’historique
           final historyProvider =
               Provider.of<HistoryProvider>(context, listen: false);
           historyProvider.addToHistory(book);
 
-          // Naviguer vers la page de détail
+          /// Aller au détail
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -46,6 +51,7 @@ class BookCard extends StatelessWidget {
         },
         child: Row(
           children: [
+            /// ---- IMAGE ----
             Hero(
               tag: heroTag,
               child: ClipRRect(
@@ -67,13 +73,15 @@ class BookCard extends StatelessWidget {
                 ),
               ),
             ),
+
+            /// ---- TEXTE ----
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// Titre
                     Text(
                       book.title,
                       style: const TextStyle(
@@ -84,29 +92,57 @@ class BookCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
+
+                    /// Auteur
                     Text(
                       book.author,
-                      style:
-                          const TextStyle(fontSize: 14, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
                     ),
                     const SizedBox(height: 4),
+
+                    /// Genre
                     Text(
                       book.genre,
                       style: const TextStyle(
-                          fontSize: 13, color: Colors.deepPurple),
+                        color: Colors.deepPurple,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.grey,
-              ),
-              onPressed: () {
-                favoritesProvider.toggleFavorite(book);
-              },
+
+            /// ---- FAVORIS ----
+            Column(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () {
+                    favoritesProvider.toggleFavorite(book);
+                  },
+                ),
+
+                ///  Affichage du compteur "favorites"
+                if (book.favorites > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      '${book.favorites} ❤',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

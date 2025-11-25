@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// lib/screens/home_screen.dart
 
+import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
-import '../services/recommendation_service.dart';
 import '../widgets/book_card.dart';
-import '../providers/favorites_provider.dart';
 import 'favorites_screen.dart';
 import 'history_screen.dart';
+import 'recommended_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,14 +18,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // 🔎 Recherche
   String _searchQuery = "";
-
-  // 🎭 Filtres
   String? _selectedGenre = "All";
   String _selectedSort = "A-Z";
 
-  // Genres disponibles
   final List<String> genres = [
     "All",
     "Fiction",
@@ -50,26 +45,17 @@ class _HomeScreenState extends State<HomeScreen> {
     "Date ajout",
   ];
 
-  RecommendationService? _recoService;
-
-  @override
-  void initState() {
-    super.initState();
-    _recoService = RecommendationService(allBooks);
-  }
-
-  // 🔎 Applique recherche + filtres + tri
   List<Book> get filteredBooks {
     List<Book> books = [...allBooks];
 
-    // Filtre par genre
+    // Filtrer par genre
     if (_selectedGenre != "All") {
       books = books
           .where((b) => b.genre.toLowerCase() == _selectedGenre!.toLowerCase())
           .toList();
     }
 
-    // Recherche
+    // Filtrer par recherche
     if (_searchQuery.isNotEmpty) {
       books = books
           .where((b) => b.title.toLowerCase().contains(_searchQuery.toLowerCase()))
@@ -98,14 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Bookwise"),
         backgroundColor: Colors.deepPurple,
         actions: [
-          // ❤️ Favoris
           IconButton(
             icon: const Icon(Icons.favorite),
             onPressed: () {
@@ -114,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // 🕒 Historique
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
@@ -128,8 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔎 Champ de recherche
+            //  Champ de recherche
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -140,14 +123,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
+                setState(() => _searchQuery = value);
               },
             ),
             const SizedBox(height: 12),
 
-            // 🎭 Filtres par genre
+            //  Bouton vers les recommandations
+            ElevatedButton.icon(
+              icon: const Icon(Icons.star, color: Colors.white),
+              label: const Text(
+                "Voir recommandations",
+                style: TextStyle(color: Colors.white), // 🔥 TEXTE BLANC
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RecommendationsScreen()),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            //  Filtres par genre
             SizedBox(
               height: 45,
               child: ListView(
@@ -159,23 +161,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ChoiceChip(
                       label: Text(genre),
                       selected: selected,
+                      selectedColor: Colors.deepPurple,
                       labelStyle: TextStyle(
                         color: selected ? Colors.white : Colors.black,
                       ),
-                      selectedColor: Colors.deepPurple,
                       onSelected: (_) {
-                        setState(() {
-                          _selectedGenre = genre;
-                        });
+                        setState(() => _selectedGenre = genre);
                       },
                     ),
                   );
                 }).toList(),
               ),
             ),
+
             const SizedBox(height: 12),
 
-            // 🔽 Tri
+            //  Tri
             Row(
               children: [
                 const Text(
@@ -192,16 +193,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ))
                       .toList(),
                   onChanged: (value) {
-                    setState(() {
-                      _selectedSort = value!;
-                    });
+                    setState(() => _selectedSort = value!);
                   },
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
 
-            // 📚 Liste des livres
+            // Liste complète des livres
             Expanded(
               child: filteredBooks.isEmpty
                   ? const Center(

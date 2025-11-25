@@ -13,6 +13,12 @@ class FavoritesProvider extends ChangeNotifier {
     List<String> savedTitles = prefs.getStringList('favorites') ?? [];
 
     _favorites = allBooks.where((book) => savedTitles.contains(book.title)).toList();
+
+    // Mettre à jour le compteur favorites
+    for (var book in allBooks) {
+      book.favorites = savedTitles.contains(book.title) ? 1 : 0;
+    }
+
     notifyListeners();
   }
 
@@ -22,17 +28,20 @@ class FavoritesProvider extends ChangeNotifier {
 
     if (_favorites.contains(book)) {
       _favorites.remove(book);
+      book.favorites = (book.favorites - 1).clamp(0, 999999); // éviter négatifs
     } else {
       _favorites.add(book);
+      book.favorites += 1;
     }
 
-    // Sauvegarde
-    List<String> titles = _favorites.map((book) => book.title).toList();
+    // Sauvegarde des favoris par titre
+    List<String> titles = _favorites.map((b) => b.title).toList();
     await prefs.setStringList('favorites', titles);
 
     notifyListeners();
   }
 
+  /// Savoir si un livre est en favori
   bool isFavorite(Book book) {
     return _favorites.contains(book);
   }

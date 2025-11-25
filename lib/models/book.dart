@@ -1,14 +1,18 @@
-// lib/models/book.dart
 class Book {
-  final String id;           // ID unique pour Hero et identification
+  final String id;             
   final String title;
   final String author;
   final String genre;
   final String imagePath;
-  final String description;  // Description du livre
-  final int? popularity;     // Popularité optionnelle
-  final DateTime? dateAdded; // Date d'ajout optionnelle
-  int clicks;                // Nombre de clics pour recommandations
+  final String description;
+
+  final int? popularity;
+  final DateTime? dateAdded;
+
+  // --- Champs utilisés pour le système de recommandations ---
+  int clicks;            // nombre de fois que le livre a été ouvert
+  int favorites;         // nombre de fois ajouté aux favoris
+  double minutesRead;    // temps passé à lire le livre
 
   Book({
     required this.id,
@@ -19,6 +23,13 @@ class Book {
     required this.description,
     this.popularity,
     this.dateAdded,
-    this.clicks = 0,         // valeur par défaut
+    this.clicks = 0,
+    this.favorites = 0,
+    this.minutesRead = 0,
   });
+
+  /// Score de recommandation automatique
+  double get score {
+    return (1.2 * clicks) + (2.5 * favorites) + (0.8 * minutesRead);
+  }
 }
