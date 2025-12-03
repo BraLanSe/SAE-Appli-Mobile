@@ -18,6 +18,7 @@ Ce premier livrable se concentre sur :
 -L’intégration d’un design simple et fonctionnel
 
 🚀 Fonctionnalités incluses dans ce livrable
+
 ✔️ 1. Home Screen
 
 Affichage des livres
