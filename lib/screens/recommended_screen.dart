@@ -46,7 +46,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: BookCard(
                     book: book,
-                    heroTag: book.id + "_reco",
+                    heroTag: "${book.id}_reco",
                   ),
                 );
               },

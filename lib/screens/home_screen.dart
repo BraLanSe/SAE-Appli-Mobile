@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.favorite),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => FavoritesScreen()),
+                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
               );
             },
           ),
