@@ -135,4 +135,6 @@ Ce livrable constitue la base fonctionnelle de l’application, avec une archite
 👤 Auteur
 
 Projet réalisé par Tassadit, Bradley, Hocine, Hichem, Yacine, Mohamad, Anouar
-Développé en Flutter – 2025
+
+
+BUT 3 INFO
