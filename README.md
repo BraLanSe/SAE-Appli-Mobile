@@ -1,16 +1,128 @@
-# bookwise
+README – BookWise (Livrable 1)
+📌 Présentation du projet
 
-A new Flutter project.
+BookWise est une application Flutter permettant aux utilisateurs de découvrir des livres, consulter leurs détails, enregistrer des favoris, et recevoir des recommandations personnalisées basées sur leurs interactions.
 
-## Getting Started
+Ce premier livrable se concentre sur :
 
-This project is a starting point for a Flutter application.
+-La structure du projet Flutter
 
-A few resources to get you started if this is your first Flutter project:
+-L’affichage de la liste de livres
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+-L’écran de détails d’un livre
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-Le système de favoris
+
+-La base de la page dédiée aux recommandations
+
+-L’intégration d’un design simple et fonctionnel
+
+🚀 Fonctionnalités incluses dans ce livrable
+✔️ 1. Home Screen
+
+Affichage des livres
+
+-Barre de recherche (placeholder)
+
+-Navigation vers les détails d’un livre
+
+✔️ 2. Book Detail Screen
+
+-Présentation du livre (titre, auteur, description, genre…)
+
+-Bouton Ajouter/Retirer des favoris
+
+✔️ 3. Favoris
+
+-Système utilisant Provider
+
+-Stockage temporaire en mémoire (pas encore persistant)
+
+✔️ 4. Recommandations
+
+-Page dédiée
+
+Logique de recommandation basée sur :
+
+-Le genre du livre ouvert
+
+-Les livres mis en favoris
+
+(La logique est basique pour ce livrable, mais fonctionnelle.)
+
+✔️ 5. Navigation
+
+-Configuration propre avec MaterialPageRoute
+
+Architecture claire : models/, screens/, providers/, widgets/
+
+📁 Structure du projet
+lib/
+ ├── models/           # Modèles (Book, User…)
+ ├── screens/          # Écrans : Home, Details, Favorites, Recommendations...
+ ├── providers/        # Gestion d’état (FavoritesProvider)
+ ├── widgets/          # Widgets réutilisables
+ ├── services/         # Logique métier (recommandations, API futur)
+ └── utils/            # Styles, helpers, constantes...
+
+📦 Installation
+1️⃣ Cloner le projet
+git clone <(https://github.com/BraLanSe/SAE-Appli-Mobile.git)>
+
+cd bookwise
+
+2️⃣ Installer les dépendances
+flutter pub get
+
+3️⃣ Lancer l’application
+
+Chrome :
+
+flutter run -d chrome
+
+
+Android :
+
+flutter run
+
+🖼️ Gestion des assets
+
+Ce livrable inclut :
+
+-assets/images/
+
+-assets/fonts/
+
+Les assets doivent être déclarés dans pubspec.yaml :
+
+assets:
+  - assets/images/
+  - assets/fonts/
+
+🛠️ Technologies utilisées
+
+-Flutter 3.x
+
+-Dart
+
+-Provider (gestion d’état)
+
+-Material Design
+
+📌 Livrable conforme aux attentes
+
+Ce livrable constitue la base fonctionnelle de l’application, avec une architecture claire permettant :
+
+-d’ajouter une base de données,
+
+-d’intégrer une API réelle,
+
+-d’améliorer les recommandations avec des algorithmes plus poussés,
+
+-d’implanter un système d’authentification.
+
+
+👤 Auteur
+
+Projet réalisé par Tassadit, Bradley, Hocine, Hichem, Yacine, Mohamad, Anouar
+Développé en Flutter – 2025
