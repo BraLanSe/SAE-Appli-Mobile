@@ -1,63 +1,65 @@
-README – BookWise (Livrable 1)
-📌 Présentation du projet
+# BookWise (Livrable 1)
 
-BookWise est une application Flutter permettant aux utilisateurs de découvrir des livres, consulter leurs détails, enregistrer des favoris, et recevoir des recommandations personnalisées basées sur leurs interactions.
+## Présentation du projet
+
+**BookWise** est une application Flutter permettant aux utilisateurs de découvrir des livres, consulter leurs détails, enregistrer des favoris, et recevoir des recommandations personnalisées basées sur leurs interactions.
 
 Ce premier livrable se concentre sur :
 
--La structure du projet Flutter
+La structure du projet Flutter qui se présente avec : 
 
--L’affichage de la liste de livres
+- L’affichage de la liste de livres
 
--L’écran de détails d’un livre
+- L’écran de détails d’un livre
 
--Le système de favoris
+- Le système de favoris
 
--La base de la page dédiée aux recommandations
+- La base de la page dédiée aux recommandations
 
--L’intégration d’un design simple et fonctionnel
+- L’intégration d’un design simple et fonctionnel
 
-🚀 Fonctionnalités incluses dans ce livrable
+### Fonctionnalités incluses dans ce livrable ###
 
-✔️ 1. Home Screen
+✔️ **1. Home Screen**
 
 Affichage des livres
 
--Barre de recherche (placeholder)
+- Barre de recherche (placeholder)
 
--Navigation vers les détails d’un livre
+- Navigation vers les détails d’un livre
 
-✔️ 2. Book Detail Screen
+✔️ **2. Book Detail Screen**
 
--Présentation du livre (titre, auteur, description, genre…)
+- Présentation du livre (titre, auteur, description, genre…)
 
--Bouton Ajouter/Retirer des favoris
+- Bouton Ajouter/Retirer des favoris
 
-✔️ 3. Favoris
+✔️ **3. Favoris**
 
--Système utilisant Provider
+- Système utilisant Provider
 
 -Stockage temporaire en mémoire (pas encore persistant)
 
-✔️ 4. Recommandations
+✔️ **4. Recommandations**
 
--Page dédiée
+- Page dédiée
 
 Logique de recommandation basée sur :
 
--Le genre du livre ouvert
+- Le genre du livre ouvert
 
--Les livres mis en favoris
+- Les livres mis en favoris
 
 (La logique est basique pour ce livrable, mais fonctionnelle.)
 
-✔️ 5. Navigation
+✔️ **5. Navigation** 
 
--Configuration propre avec MaterialPageRoute
+- Configuration propre avec MaterialPageRoute
 
-Architecture claire : models/, screens/, providers/, widgets/
 
-📁 Structure du projet
+
+📁 Architecture de l'application
+```bash
 lib/
  ├── models/           # Modèles (Book, User…)
  ├── screens/          # Écrans : Home, Details, Favorites, Recommendations...
@@ -65,34 +67,41 @@ lib/
  ├── widgets/          # Widgets réutilisables
  ├── services/         # Logique métier (recommandations, API futur)
  └── utils/            # Styles, helpers, constantes...
+```
+### Installation ###
 
-📦 Installation
 1️⃣ Cloner le projet
-git clone <(https://github.com/BraLanSe/SAE-Appli-Mobile.git)>
+
+```bash
+git clone https://github.com/BraLanSe/SAE-Appli-Mobile.git
 
 cd bookwise
+```
 
 2️⃣ Installer les dépendances
+
+```bash
 flutter pub get
+```
 
 3️⃣ Lancer l’application
 
 Chrome :
-
+```bash
 flutter run -d chrome
-
+```
 
 Android :
-
+```bash
 flutter run
-
-🖼️ Gestion des assets
+```
+### Gestion des assets ###
 
 Ce livrable inclut :
 
--assets/images/
+- assets/images/
 
--assets/fonts/
+- assets/fonts/
 
 Les assets doivent être déclarés dans pubspec.yaml :
 
@@ -100,27 +109,27 @@ assets:
   - assets/images/
   - assets/fonts/
 
-🛠️ Technologies utilisées
+### Technologies utilisées ###
 
--Flutter 3.x
+- Flutter 3.x
 
--Dart
+- Dart
 
--Provider (gestion d’état)
+- Provider (gestion d’état)
 
--Material Design
+- Material Design
 
-📌 Livrable conforme aux attentes
+### Livrable conforme aux attentes ###
 
 Ce livrable constitue la base fonctionnelle de l’application, avec une architecture claire permettant :
 
--d’ajouter une base de données,
+- d’ajouter une base de données,
 
--d’intégrer une API réelle,
+- d’intégrer une API réelle,
 
--d’améliorer les recommandations avec des algorithmes plus poussés,
+- d’améliorer les recommandations avec des algorithmes plus poussés,
 
--d’implanter un système d’authentification.
+- d’implanter un système d’authentification.
 
 
 👤 Auteur
