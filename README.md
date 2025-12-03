@@ -1,135 +1,97 @@
 # BookWise (Livrable 1)
+# Bookwise
 
-## Présentation du projet
+Bookwise est une application mobile Flutter pour gérer, consulter et suivre vos livres préférés. Elle propose des fonctionnalités de recommandation, un historique de lecture et la gestion de favoris. L'application est multi-plateformes (Android, iOS, Web, Windows, macOS, Linux).
 
-**BookWise** est une application Flutter permettant aux utilisateurs de découvrir des livres, consulter leurs détails, enregistrer des favoris, et recevoir des recommandations personnalisées basées sur leurs interactions.
+---
 
-Ce premier livrable se concentre sur :
+## Fonctionnalités
 
-La structure du projet Flutter qui se présente avec : 
+* **Accueil** : Page principale présentant les livres et catégories.
+* **Détails d'un livre** : Informations complètes sur chaque livre.
+* **Recommandations** : Suggestions basées sur les préférences de l'utilisateur.
+* **Favoris** : Ajouter et consulter les livres favoris.
+* **Historique** : Suivi des livres consultés ou lus.
+* **Multi-plateformes** : Android, iOS, Web, Windows, macOS et Linux.
+* **Gestion des assets** : Couvertures de livres et icônes.
 
-- L’affichage de la liste de livres
+---
 
-- L’écran de détails d’un livre
+## Arborescence du projet
 
-- Le système de favoris
-
-- La base de la page dédiée aux recommandations
-
-- L’intégration d’un design simple et fonctionnel
-
-### Fonctionnalités incluses dans ce livrable ###
-
-✔️ **1. Home Screen**
-
-Affichage des livres
-
-- Barre de recherche (placeholder)
-
-- Navigation vers les détails d’un livre
-
-✔️ **2. Book Detail Screen**
-
-- Présentation du livre (titre, auteur, description, genre…)
-
-- Bouton Ajouter/Retirer des favoris
-
-✔️ **3. Favoris**
-
-- Système utilisant Provider
-
--Stockage temporaire en mémoire (pas encore persistant)
-
-✔️ **4. Recommandations**
-
-- Page dédiée
-
-Logique de recommandation basée sur :
-
-- Le genre du livre ouvert
-
-- Les livres mis en favoris
-
-(La logique est basique pour ce livrable, mais fonctionnelle.)
-
-✔️ **5. Navigation** 
-
-- Configuration propre avec MaterialPageRoute
-
-
-
-📁 Architecture de l'application
-```bash
-lib/
- ├── models/           # Modèles (Book, User…)
- ├── screens/          # Écrans : Home, Details, Favorites, Recommendations...
- ├── providers/        # Gestion d’état (FavoritesProvider)
- ├── widgets/          # Widgets réutilisables
- ├── services/         # Logique métier (recommandations, API futur)
- └── utils/            # Styles, helpers, constantes...
 ```
-### Installation ###
+C:.
+├── android/         # Code et configurations Android
+├── ios/             # Code et configurations iOS
+├── lib/             # Code Dart principal
+│   ├── models/      # Modèles de données
+│   ├── providers/   # Providers pour gestion d'état
+│   ├── screens/     # Écrans de l'application
+│   ├── services/    # Services, par ex. recommandations
+│   ├── utils/       # Fonctions utilitaires
+│   └── widgets/     # Widgets réutilisables
+├── assets/          # Images et autres ressources
+├── web/             # Configuration et assets Web
+├── windows/         # Configuration Windows
+├── macos/           # Configuration macOS
+├── linux/           # Configuration Linux
+└── test/            # Tests unitaires et widgets
+```
 
-1️⃣ Cloner le projet
+---
+
+## Installation
+
+1. **Cloner le dépôt :**
 
 ```bash
 git clone https://github.com/BraLanSe/SAE-Appli-Mobile.git
-
-cd bookwise
+cd SAE-Appli-Mobile
 ```
 
-2️⃣ Installer les dépendances
+2. **Installer les dépendances Flutter :**
 
 ```bash
 flutter pub get
 ```
 
-3️⃣ Lancer l’application
+3. **Exécuter l'application :**
 
-Chrome :
+* Sur mobile Android/iOS :
+
+```bash
+flutter run
+```
+
+* Sur Web :
+
 ```bash
 flutter run -d chrome
 ```
 
-Android :
+4. **Pour construire une version release :**
+
 ```bash
-flutter run
+flutter build apk       # Android
+flutter build ios       # iOS
+flutter build web       # Web
+flutter build windows   # Windows
+flutter build macos     # macOS
+flutter build linux     # Linux
 ```
-### Gestion des assets ###
 
-Ce livrable inclut :
+---
 
-- assets/images/
+## Dépendances principales
 
-- assets/fonts/
+* Flutter SDK
+* `provider` pour la gestion d'état
+* `sqflite` pour la base de données locale
+* `shared_preferences` pour le stockage léger
+* `fl_chart` pour les graphiques (si nécessaire)
+* `google_fonts` pour les polices
 
-Les assets doivent être déclarés dans pubspec.yaml :
-
-assets:
-  - assets/images/
-  - assets/fonts/
-
-### Technologies utilisées ###
-
-- Flutter 3.x
-
-- Dart
-
-- Provider (gestion d’état)
-
-- Material Design
-
-### Livrable conforme aux attentes ###
-
-Ce livrable constitue la base fonctionnelle de l’application, avec une architecture claire permettant :
-
-- d’ajouter une base de données,
-
-- d’intégrer une API réelle,
-
-- d’améliorer les recommandations avec des algorithmes plus poussés,
-
-- d’implanter un système d’authentification.
+---
 
 
 👤 Auteur
