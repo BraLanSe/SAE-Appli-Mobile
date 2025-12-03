@@ -86,7 +86,6 @@ flutter build linux     # Linux
 
 * Flutter SDK
 * `provider` pour la gestion d'état
-* `sqflite` pour la base de données locale
 * `shared_preferences` pour le stockage léger
 * `fl_chart` pour les graphiques (si nécessaire)
 * `google_fonts` pour les polices
