@@ -20,7 +20,7 @@ Bookwise est une application mobile Flutter pour gérer, consulter et suivre vos
 ## Arborescence du projet
 
 ```
-C:.
+
 ├── android/         # Code et configurations Android
 ├── ios/             # Code et configurations iOS
 ├── lib/             # Code Dart principal
