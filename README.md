@@ -57,18 +57,11 @@ flutter pub get
 
 3. **Exécuter l'application :**
 
-* Sur mobile Android/iOS :
+* Sur mobile Android :
 
 ```bash
 flutter run
 ```
-
-* Sur Web :
-
-```bash
-flutter run -d chrome
-```
-
 4. **Pour construire une version release :**
 
 ```bash
