@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
 import 'utils/data.dart';
-import 'screens/welcome_screen.dart'; 
+import 'screens/welcome_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,10 +35,19 @@ class BookwiseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
-        fontFamily: 'Roboto',
+        fontFamily: GoogleFonts.roboto().fontFamily, // Base font
+        textTheme: GoogleFonts.robotoTextTheme().copyWith(
+          // Global headers to Playfair Display
+          displayLarge: GoogleFonts.playfairDisplay(),
+          displayMedium: GoogleFonts.playfairDisplay(),
+          displaySmall: GoogleFonts.playfairDisplay(),
+          headlineLarge: GoogleFonts.playfairDisplay(),
+          headlineMedium: GoogleFonts.playfairDisplay(),
+          headlineSmall: GoogleFonts.playfairDisplay(),
+          titleLarge: GoogleFonts.playfairDisplay(),
+        ),
       ),
-      
-      home: const WelcomeScreen(), 
+      home: const WelcomeScreen(),
     );
   }
 }

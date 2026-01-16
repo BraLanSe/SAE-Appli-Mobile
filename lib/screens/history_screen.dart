@@ -24,11 +24,51 @@ class HistoryScreen extends StatelessWidget {
         ],
       ),
       body: historyBooks.isEmpty
-          ? const Center(child: Text("Aucun livre consulté", style: TextStyle(fontSize: 16)))
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.history,
+                      size: 80, color: Colors.deepPurple.withOpacity(0.3)),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Aucun historique",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Playfair Display'),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Les livres que vous consultez\napparaîtront ici.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                "Utilisez l'onglet Explorer pour découvrir des livres!")),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: const Text("Découvrir des livres"),
+                  ),
+                ],
+              ),
+            )
           : ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding: const EdgeInsets.symmetric(
+                  vertical: 8, horizontal: 0), // Card has margin
               itemCount: historyBooks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, __) => const SizedBox(height: 0),
               itemBuilder: (context, index) {
                 final book = historyBooks[index];
                 return BookCard(book: book, heroTag: book.id);

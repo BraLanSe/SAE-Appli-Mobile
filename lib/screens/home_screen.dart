@@ -1,225 +1,186 @@
-// lib/screens/home_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
-import '../widgets/book_card.dart';
-import 'favorites_screen.dart';
-import 'history_screen.dart';
-import 'recommended_screen.dart';
+import '../screens/book_detail_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
-  String _searchQuery = "";
-  String? _selectedGenre = "All";
-  String _selectedSort = "A-Z";
-
-  final List<String> genres = [
-    "All",
-    "Fiction",
-    "Science-Fiction",
-    "Fantasy",
-    "Roman Philosophique",
-    "Classique",
-    "Horreur",
-    "Romance",
-    "Poésie",
-    "Thriller Psychologique",
-    "Cyberpunk",
-    "Satire",
-    "Drame",
-  ];
-
-  final List<String> sortOptions = [
-    "A-Z",
-    "Z-A",
-    "Plus populaire",
-    "Date ajout",
-  ];
-
-  List<Book> get filteredBooks {
-    List<Book> books = [...allBooks];
-
-    // Filtrer par genre
-    if (_selectedGenre != "All") {
-      books = books
-          .where((b) => b.genre.toLowerCase() == _selectedGenre!.toLowerCase())
-          .toList();
-    }
-
-    // Filtrer par recherche
-    if (_searchQuery.isNotEmpty) {
-      books = books
-          .where((b) => b.title.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
-    }
-
-    // Tri
-    switch (_selectedSort) {
-      case "A-Z":
-        books.sort((a, b) => a.title.compareTo(b.title));
-        break;
-      case "Z-A":
-        books.sort((a, b) => b.title.compareTo(a.title));
-        break;
-      case "Plus populaire":
-        books.sort((a, b) => (b.popularity ?? 0).compareTo(a.popularity ?? 0));
-        break;
-      case "Date ajout":
-        books.sort((a, b) =>
-            (b.dateAdded ?? DateTime(2000)).compareTo(a.dateAdded ?? DateTime(2000)));
-        break;
-    }
-
-    return books;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Simple logic to pick "recommended" books (e.g., first 5 or random)
+    // In a real app, this would come from a recommendation engine.
+    final List<Book> recommendedBooks = allBooks.take(5).toList();
+    final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bookwise"),
+        title: Text(
+          "Bookwise",
+          style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.deepPurple,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const HistoryScreen()),
-              );
-            },
-          ),
-        ],
+        automaticallyImplyLeading: false, // Hide back button if any
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //  Champ de recherche
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Rechercher un livre...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+              child: Text(
+                "Recommandé pour vous",
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              onChanged: (value) {
-                setState(() => _searchQuery = value);
-              },
             ),
-            const SizedBox(height: 12),
 
-            //  Bouton vers les recommandations
-            ElevatedButton.icon(
-              icon: const Icon(Icons.star, color: Colors.white),
-              label: const Text(
-                "Voir recommandations",
-                style: TextStyle(color: Colors.white), // 🔥 TEXTE BLANC
+            // Horizontal Carousel
+            SizedBox(
+              height: 280,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: recommendedBooks.length,
+                itemBuilder: (context, index) {
+                  final book = recommendedBooks[index];
+                  return _buildHorizontalBookCard(context, book);
+                },
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+              child: Text(
+                "Tendances actuelles",
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RecommendationsScreen()),
+            ),
+
+            // Vertical list snippet (for variety)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: recentBooks.length,
+              itemBuilder: (context, index) {
+                final book = recentBooks[index];
+                return ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      book.imagePath,
+                      width: 50,
+                      height: 75,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          Container(color: Colors.grey, width: 50, height: 75),
+                    ),
+                  ),
+                  title: Text(book.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text(book.author),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BookDetailScreen(
+                            book: book, heroTag: 'home_vertical_${book.id}'),
+                      ),
+                    );
+                  },
                 );
               },
             ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
 
-            const SizedBox(height: 12),
-
-            //  Filtres par genre
-            SizedBox(
-              height: 45,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: genres.map((genre) {
-                  final bool selected = _selectedGenre == genre;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(genre),
-                      selected: selected,
-                      selectedColor: Colors.deepPurple,
-                      labelStyle: TextStyle(
-                        color: selected ? Colors.white : Colors.black,
-                      ),
-                      onSelected: (_) {
-                        setState(() => _selectedGenre = genre);
-                      },
+  Widget _buildHorizontalBookCard(BuildContext context, Book book) {
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BookDetailScreen(
+                  book: book, heroTag: 'home_carousel_${book.id}'),
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image
+            Expanded(
+              child: Hero(
+                tag: 'home_carousel_${book.id}',
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: Image.asset(
+                    book.imagePath,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Colors.grey[300],
+                      alignment: Alignment.center,
+                      child:
+                          const Icon(Icons.book, size: 40, color: Colors.white),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ),
               ),
             ),
-
-            const SizedBox(height: 12),
-
-            //  Tri
-            Row(
-              children: [
-                const Text(
-                  "Trier par : ",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(width: 10),
-                DropdownButton<String>(
-                  value: _selectedSort,
-                  items: sortOptions
-                      .map((sort) => DropdownMenuItem(
-                            value: sort,
-                            child: Text(sort),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedSort = value!);
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            // Liste complète des livres
-            Expanded(
-              child: filteredBooks.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "Aucun livre trouvé",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: filteredBooks.length,
-                      itemBuilder: (context, index) {
-                        final book = filteredBooks[index];
-                        return BookCard(
-                          book: book,
-                          heroTag: book.id,
-                        );
-                      },
+            // Info
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    book.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    book.author,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
