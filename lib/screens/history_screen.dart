@@ -17,7 +17,7 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Historique"),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple, // Removed to use theme
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_forever),
@@ -35,12 +35,13 @@ class HistoryScreen extends StatelessWidget {
                       size: 80,
                       color: Colors.deepPurple.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     "Aucun historique",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Playfair Display'),
+                        fontFamily: 'Playfair Display',
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                   const SizedBox(height: 8),
                   const Text(

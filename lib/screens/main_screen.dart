@@ -74,8 +74,14 @@ class _MainScreenState extends State<MainScreen> {
                   Colors.white.withValues(alpha: 0.8), // Semi-transparent
               elevation: 0, // Remove default shadow
               type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.deepPurple,
-              unselectedItemColor: Colors.grey,
+              selectedItemColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .selectedItemColor ??
+                  Theme.of(context).colorScheme.primary,
+              unselectedItemColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .unselectedItemColor ??
+                  Colors.grey,
               showSelectedLabels: false, // Cleaner look
               showUnselectedLabels: false,
               items: const [

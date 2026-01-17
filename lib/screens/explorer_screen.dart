@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
 import '../widgets/book_card.dart';
+import 'package:provider/provider.dart';
+import '../providers/filter_provider.dart';
 import '../widgets/fade_in_animation.dart';
 
 class ExplorerScreen extends StatefulWidget {
@@ -14,10 +16,15 @@ class ExplorerScreen extends StatefulWidget {
 
 class _ExplorerScreenState extends State<ExplorerScreen> {
   final TextEditingController _searchController = TextEditingController();
-
-  String _searchQuery = "";
-  String? _selectedGenre = "All";
   String _selectedSort = "A-Z";
+
+  @override
+  void initState() {
+    super.initState();
+    // Sync text controller with provider if needed, or just let it stay empty initially
+    // But since we want to keep search persistence, we might want to set it.
+    // For now, let's keep it simple.
+  }
 
   final List<String> genres = [
     "All",
@@ -42,21 +49,21 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
     "Date ajout",
   ];
 
-  List<Book> get filteredBooks {
+  List<Book> _getFilteredBooks(String genre, String searchQuery) {
     List<Book> books = [...allBooks];
 
     // Filtrer par genre
-    if (_selectedGenre != "All") {
+    if (genre != "All") {
       books = books
-          .where((b) => b.genre.toLowerCase() == _selectedGenre!.toLowerCase())
+          .where((b) => b.genre.toLowerCase() == genre.toLowerCase())
           .toList();
     }
 
     // Filtrer par recherche
-    if (_searchQuery.isNotEmpty) {
+    if (searchQuery.isNotEmpty) {
       books = books
           .where(
-              (b) => b.title.toLowerCase().contains(_searchQuery.toLowerCase()))
+              (b) => b.title.toLowerCase().contains(searchQuery.toLowerCase()))
           .toList();
     }
 
@@ -82,6 +89,12 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final filterProvider = Provider.of<FilterProvider>(context);
+    final filteredBooks = _getFilteredBooks(
+      filterProvider.selectedGenre,
+      filterProvider.searchQuery,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -111,7 +124,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                 fillColor: Theme.of(context).cardColor, // Adaptive fill
               ),
               onChanged: (value) {
-                setState(() => _searchQuery = value);
+                filterProvider.setSearchQuery(value);
               },
             ),
             const SizedBox(height: 12),
@@ -122,27 +135,27 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: genres.map((genre) {
-                  final bool selected = _selectedGenre == genre;
+                  final bool selected = filterProvider.selectedGenre == genre;
                   final theme = Theme.of(context);
                   final isDarkMode = theme.brightness == Brightness.dark;
 
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
-                      label: Text(genre),
-                      selected: selected,
-                      selectedColor: isDarkMode
-                          ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                          : Colors.deepPurple.shade100,
-                      labelStyle: TextStyle(
-                        color: selected
-                            ? (isDarkMode
-                                ? theme.colorScheme.primary
-                                : Colors.deepPurple)
-                            : theme.textTheme.bodyMedium?.color,
-                        fontWeight:
-                            selected ? FontWeight.bold : FontWeight.normal,
+                      label: Text(
+                        genre,
+                        style: TextStyle(
+                            color: selected
+                                ? (isDarkMode
+                                    ? theme.colorScheme.primary
+                                    : Colors.deepPurple)
+                                : (isDarkMode
+                                    ? Colors.white70
+                                    : Colors.grey[600]),
+                            fontWeight:
+                                selected ? FontWeight.bold : FontWeight.normal),
                       ),
+                      selected: selected,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
@@ -156,7 +169,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                         ),
                       ),
                       onSelected: (_) {
-                        setState(() => _selectedGenre = genre);
+                        filterProvider.setGenre(genre);
                       },
                     ),
                   );
@@ -169,9 +182,13 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
             //  Tri
             Row(
               children: [
-                const Text(
+                Text(
                   "Trier par : ",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 DropdownButton<String>(
@@ -179,8 +196,13 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                   items: sortOptions
                       .map((sort) => DropdownMenuItem(
                             value: sort,
-                            child: Text(sort,
-                                style: const TextStyle(fontSize: 14)),
+                            child: Text(
+                              sort,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
                           ))
                       .toList(),
                   onChanged: (value) {

@@ -162,12 +162,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     "Description",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Playfair Display',
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -213,6 +214,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Playfair Display',
                           fontSize: 18,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                       Text(
@@ -245,12 +247,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   const SizedBox(height: 30),
 
                   // Personal Notes Section
-                  const Text(
+                  Text(
                     "Mes notes",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Playfair Display',
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -271,12 +274,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
                   // Related Books Section
                   if (relatedBooks.isNotEmpty) ...[
-                    const Text(
+                    Text(
                       "Vous aimerez aussi",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Playfair Display',
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 12),
