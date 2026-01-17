@@ -3,6 +3,7 @@ import 'home_screen.dart';
 import 'explorer_screen.dart';
 import 'favorites_screen.dart';
 import 'history_screen.dart';
+import 'settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -31,6 +32,7 @@ class _MainScreenState extends State<MainScreen> {
     const ExplorerScreen(),
     const FavoritesScreen(),
     const HistoryScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -66,6 +68,10 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'Historique',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Paramètres',
           ),
         ],
       ),
