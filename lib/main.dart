@@ -5,8 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/filter_provider.dart'; // Added
 import 'utils/data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
+import 'screens/onboarding_screen.dart'; // Added
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,20 +26,33 @@ void main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.loadTheme();
 
+  // Initialisation du filtre
+  final filterProvider = FilterProvider();
+
+  // Check onboarding status
+  final prefs = await SharedPreferences.getInstance();
+  final seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => favoritesProvider),
         ChangeNotifierProvider(create: (_) => historyProvider),
         ChangeNotifierProvider(create: (_) => themeProvider),
+        ChangeNotifierProvider(create: (_) => filterProvider),
       ],
-      child: const BookwiseApp(),
+      child: BookwiseApp(seenOnboarding: seenOnboarding),
     ),
   );
 }
 
 class BookwiseApp extends StatelessWidget {
-  const BookwiseApp({super.key});
+  final bool seenOnboarding;
+
+  const BookwiseApp({
+    super.key,
+    required this.seenOnboarding,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +113,18 @@ class BookwiseApp extends StatelessWidget {
               unselectedItemColor: Colors.grey,
             ),
 
+            // Chip Theme
+            chipTheme: ChipThemeData(
+              backgroundColor: const Color(0xFF1E2230),
+              labelStyle: const TextStyle(color: Colors.white70),
+              secondarySelectedColor:
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              secondaryLabelStyle: const TextStyle(color: Color(0xFF8B5CF6)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+
             // Text Theme
             textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme)
                 .copyWith(
@@ -122,7 +150,8 @@ class BookwiseApp extends StatelessWidget {
                   displayColor: Colors.white,
                 ),
           ),
-          home: const WelcomeScreen(),
+          home:
+              seenOnboarding ? const WelcomeScreen() : const OnboardingScreen(),
         );
       },
     );
