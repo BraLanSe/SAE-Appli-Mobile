@@ -88,7 +88,6 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
           "Explorer",
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -100,12 +99,16 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: "Rechercher un livre...",
+                hintStyle: TextStyle(
+                    color: Theme.of(context).hintColor), // Adaptive hint
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                filled: true,
+                fillColor: Theme.of(context).cardColor, // Adaptive fill
               ),
               onChanged: (value) {
                 setState(() => _searchQuery = value);
@@ -120,14 +123,23 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                 scrollDirection: Axis.horizontal,
                 children: genres.map((genre) {
                   final bool selected = _selectedGenre == genre;
+                  final theme = Theme.of(context);
+                  final isDarkMode = theme.brightness == Brightness.dark;
+
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
                       label: Text(genre),
                       selected: selected,
-                      selectedColor: Colors.deepPurple.shade100,
+                      selectedColor: isDarkMode
+                          ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                          : Colors.deepPurple.shade100,
                       labelStyle: TextStyle(
-                        color: selected ? Colors.deepPurple : Colors.black,
+                        color: selected
+                            ? (isDarkMode
+                                ? theme.colorScheme.primary
+                                : Colors.deepPurple)
+                            : theme.textTheme.bodyMedium?.color,
                         fontWeight:
                             selected ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -135,8 +147,12 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
                           color: selected
-                              ? Colors.deepPurple
-                              : Colors.grey.shade300,
+                              ? (isDarkMode
+                                  ? theme.colorScheme.primary
+                                  : Colors.deepPurple)
+                              : (isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade300),
                         ),
                       ),
                       onSelected: (_) {

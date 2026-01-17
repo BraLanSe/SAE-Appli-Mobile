@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
           "Bookwise",
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple, // Removed to use Theme
         automaticallyImplyLeading: false, // Hide back button if any
       ),
       body: SingleChildScrollView(
@@ -129,19 +129,27 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildHorizontalBookCard(BuildContext context, Book book) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Container(
       width: 160,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: isDarkMode
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withValues(alpha: 0.05))
+            : null,
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -180,7 +188,7 @@ class HomeScreen extends StatelessWidget {
                       }
                     },
                     errorBuilder: (_, __, ___) => Container(
-                      color: Colors.grey[300],
+                      color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
                       alignment: Alignment.center,
                       child:
                           const Icon(Icons.book, size: 40, color: Colors.white),
@@ -199,7 +207,7 @@ class HomeScreen extends StatelessWidget {
                     book.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -209,9 +217,8 @@ class HomeScreen extends StatelessWidget {
                     book.author,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: 12,
-                      color: Colors.grey[600],
                     ),
                   ),
                 ],

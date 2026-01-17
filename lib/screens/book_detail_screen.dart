@@ -20,11 +20,13 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   final TextEditingController _noteController = TextEditingController();
+  double _readingProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
     _loadNote();
+    _loadProgress();
   }
 
   @override
@@ -46,12 +48,30 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     await prefs.setString('note_${widget.book.id}', value);
   }
 
+  Future<void> _loadProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _readingProgress = prefs.getDouble('progress_${widget.book.id}') ?? 0.0;
+    });
+  }
+
+  Future<void> _updateProgress(double value) async {
+    setState(() {
+      _readingProgress = value;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('progress_${widget.book.id}', value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final relatedBooks = allBooks
         .where((b) => b.genre == widget.book.genre && b.id != widget.book.id)
         .take(5)
         .toList();
+
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: CustomScrollView(
@@ -109,14 +129,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.person, color: Colors.deepPurple),
+                      Icon(Icons.person, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         widget.book.author,
-                        style: const TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
                         ),
                       ),
                     ],
@@ -126,14 +145,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple.shade50,
+                      color: isDarkMode
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : Colors.deepPurple.shade50,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       widget.book.genre,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.deepPurple.shade700,
+                        color: isDarkMode
+                            ? theme.colorScheme.primary
+                            : Colors.deepPurple.shade700,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -150,10 +173,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   const SizedBox(height: 12),
                   Text(
                     widget.book.description,
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
                       height: 1.6,
-                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -177,6 +199,47 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Reading Progress Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Progression",
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Playfair Display',
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        "${(_readingProgress * 100).toInt()}%",
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 6,
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 8),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 16),
+                    ),
+                    child: Slider(
+                      value: _readingProgress,
+                      onChanged: _updateProgress,
+                      activeColor: theme.colorScheme.primary,
+                      inactiveColor:
+                          theme.colorScheme.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   const SizedBox(height: 30),

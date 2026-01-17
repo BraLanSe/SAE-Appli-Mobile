@@ -23,18 +23,27 @@ class BookCard extends StatelessWidget {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
     final bool isFavorite = favoritesProvider.isFavorite(book);
 
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12), // Requested radius
+        color: theme.cardColor, // Use theme card color
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05), // Lighter shadow
+            color: isDarkMode
+                ? Colors.black
+                    .withValues(alpha: 0.3) // Stronger shadow for dark mode
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withValues(alpha: 0.05))
+            : null, // Subtle scale border in dark mode
       ),
       child: Material(
         color: Colors.transparent,
@@ -105,11 +114,11 @@ class BookCard extends StatelessWidget {
                       /// Titre
                       Text(
                         book.title,
-                        style: const TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'Playfair Display',
                           fontSize: 16,
-                          fontFamily:
-                              'Playfair Display', // Using the new font for titles
+                          color: theme.colorScheme.onSurface, // Adaptive color
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -119,9 +128,10 @@ class BookCard extends StatelessWidget {
                       /// Auteur
                       Text(
                         book.author,
-                        style: TextStyle(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 14,
-                          color: Colors.grey[700],
+                          color: theme
+                              .textTheme.bodyMedium?.color, // Adaptive color
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -131,13 +141,17 @@ class BookCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple.withValues(alpha: 0.1),
+                          color: isDarkMode
+                              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                              : Colors.deepPurple.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           book.genre,
-                          style: const TextStyle(
-                            color: Colors.deepPurple,
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? theme.colorScheme.primary
+                                : Colors.deepPurple,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),

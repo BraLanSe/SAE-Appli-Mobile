@@ -64,17 +64,63 @@ class BookwiseApp extends StatelessWidget {
             primarySwatch: Colors.deepPurple,
             brightness: Brightness.dark,
             fontFamily: GoogleFonts.roboto().fontFamily,
-            scaffoldBackgroundColor: const Color(0xFF121212),
+            scaffoldBackgroundColor:
+                const Color(0xFF0F111A), // Deep Midnight Blue
+            canvasColor: const Color(0xFF1E2230), // For bottom sheets etc
+            cardColor: const Color(0xFF1E2230), // Lighter blue-grey for cards
+
+            // Define a refined ColorScheme
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF8B5CF6), // Vivid Violet
+              secondary: Color(0xFF03DAC6), // Teal accent
+              surface: Color(0xFF1E2230),
+              onSurface: Color(0xFFE2E8F0), // Off-white text
+              error: Color(0xFFCF6679),
+            ),
+
+            // AppBar Theme
+            appBarTheme: AppBarTheme(
+              backgroundColor: const Color(0xFF0F111A).withValues(alpha: 0.8),
+              elevation: 0,
+              iconTheme: const IconThemeData(color: Colors.white),
+              titleTextStyle: GoogleFonts.playfairDisplay(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            // Bottom Navigation Bar Theme
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Color(0xFF1E2230),
+              selectedItemColor: Color(0xFF8B5CF6),
+              unselectedItemColor: Colors.grey,
+            ),
+
+            // Text Theme
             textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme)
                 .copyWith(
-              displayLarge: GoogleFonts.playfairDisplay(),
-              displayMedium: GoogleFonts.playfairDisplay(),
-              displaySmall: GoogleFonts.playfairDisplay(),
-              headlineLarge: GoogleFonts.playfairDisplay(),
-              headlineMedium: GoogleFonts.playfairDisplay(),
-              headlineSmall: GoogleFonts.playfairDisplay(),
-              titleLarge: GoogleFonts.playfairDisplay(),
-            ),
+                  displayLarge:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  displayMedium:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  displaySmall:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  headlineLarge:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  headlineMedium:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  headlineSmall:
+                      GoogleFonts.playfairDisplay(color: Colors.white),
+                  titleLarge: GoogleFonts.playfairDisplay(color: Colors.white),
+                  titleMedium: TextStyle(color: Colors.grey[300]),
+                  bodyLarge: TextStyle(color: Colors.grey[300]),
+                  bodyMedium: TextStyle(color: Colors.grey[400]),
+                )
+                .apply(
+                  bodyColor: Colors.grey[300],
+                  displayColor: Colors.white,
+                ),
           ),
           home: const WelcomeScreen(),
         );
