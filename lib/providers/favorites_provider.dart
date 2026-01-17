@@ -1,48 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
+import '../services/database_service.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   List<Book> _favorites = [];
+  final db = DatabaseService();
 
   List<Book> get favorites => _favorites;
 
-  /// Charger les favoris depuis SharedPreferences
-  Future<void> loadFavorites(List<Book> allBooks) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> savedTitles = prefs.getStringList('favorites') ?? [];
-
-    _favorites = allBooks.where((book) => savedTitles.contains(book.title)).toList();
-
-    // Mettre à jour le compteur favorites
-    for (var book in allBooks) {
-      book.favorites = savedTitles.contains(book.title) ? 1 : 0;
-    }
-
+  /// Charger les favoris depuis SQLite
+  Future<void> loadFavorites() async {
+    _favorites = await db.getFavorites();
     notifyListeners();
   }
 
-  /// Ajouter ou retirer un favori
+  /// Ajouter un favori
+  Future<void> addFavorite(Book book) async {
+    // Augmenter le compteur favorites
+    book.favorites += 1;
+    await db.addFavorite(book);
+    await loadFavorites();
+  }
+
+  /// Retirer un favori
+  Future<void> removeFavorite(String id) async {
+    await db.removeFavorite(id);
+    await loadFavorites();
+  }
+
+  /// Ajouter ou retirer un favori (toggle)
   Future<void> toggleFavorite(Book book) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (_favorites.contains(book)) {
-      _favorites.remove(book);
-      book.favorites = (book.favorites - 1).clamp(0, 999999); // éviter négatifs
+    if (isFavorite(book.id)) {
+      await removeFavorite(book.id);
+      book.favorites = (book.favorites - 1).clamp(0, 999999);
     } else {
-      _favorites.add(book);
-      book.favorites += 1;
+      await addFavorite(book);
     }
-
-    // Sauvegarde des favoris par titre
-    List<String> titles = _favorites.map((b) => b.title).toList();
-    await prefs.setStringList('favorites', titles);
-
-    notifyListeners();
   }
 
   /// Savoir si un livre est en favori
-  bool isFavorite(Book book) {
-    return _favorites.contains(book);
+  bool isFavorite(String id) {
+    return _favorites.any((book) => book.id == id);
   }
 }

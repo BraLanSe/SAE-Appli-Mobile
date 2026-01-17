@@ -19,7 +19,8 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final bool isFavorite = favoritesProvider.isFavorite(book);
+    // ✅ Changement ici : on passe l'ID au lieu de l'objet
+    final bool isFavorite = favoritesProvider.isFavorite(book.id);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -129,7 +130,7 @@ class BookCard extends StatelessWidget {
                   },
                 ),
 
-                ///  Affichage du compteur "favorites"
+                /// Affichage du compteur "favorites"
                 if (book.favorites > 0)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),

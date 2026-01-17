@@ -7,6 +7,7 @@ import '../widgets/book_card.dart';
 import 'favorites_screen.dart';
 import 'history_screen.dart';
 import 'recommended_screen.dart';
+import 'stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,11 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
           .toList();
     }
 
-    // Filtrer par recherche
+    // Filtrer par recherche : titre OU auteur
     if (_searchQuery.isNotEmpty) {
-      books = books
-          .where((b) => b.title.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
+      final queryLower = _searchQuery.toLowerCase();
+      books = books.where((b) =>
+          b.title.toLowerCase().contains(queryLower) ||
+          b.author.toLowerCase().contains(queryLower)
+      ).toList();
     }
 
     // Tri
@@ -91,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite),
+            tooltip: "Favoris",
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const FavoritesScreen()),
@@ -99,9 +103,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.history),
+            tooltip: "Historique",
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const HistoryScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: "Statistiques",
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const StatsScreen()),
               );
             },
           ),
@@ -112,11 +126,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //  Champ de recherche
+            // Barre de recherche
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: "Rechercher un livre...",
+                hintText: "Rechercher un livre ou un auteur...",
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -128,12 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
 
-            //  Bouton vers les recommandations
+            // Bouton vers recommandations
             ElevatedButton.icon(
               icon: const Icon(Icons.star, color: Colors.white),
               label: const Text(
                 "Voir recommandations",
-                style: TextStyle(color: Colors.white), // 🔥 TEXTE BLANC
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
@@ -146,10 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
             const SizedBox(height: 12),
 
-            //  Filtres par genre
+            // Filtres par genre
             SizedBox(
               height: 45,
               child: ListView(
@@ -173,10 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 }).toList(),
               ),
             ),
-
             const SizedBox(height: 12),
 
-            //  Tri
+            // Tri
             Row(
               children: [
                 const Text(
@@ -198,10 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
 
-            // Liste complète des livres
+            // Liste des livres
             Expanded(
               child: filteredBooks.isEmpty
                   ? const Center(
