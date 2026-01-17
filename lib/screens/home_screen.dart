@@ -6,6 +6,8 @@ import '../providers/history_provider.dart';
 
 import '../utils/data.dart';
 import '../screens/book_detail_screen.dart';
+import '../widgets/shimmer_loading.dart';
+import '../widgets/fade_in_animation.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -50,18 +52,24 @@ class HomeScreen extends StatelessWidget {
                 itemCount: recommendedBooks.length,
                 itemBuilder: (context, index) {
                   final book = recommendedBooks[index];
-                  return _buildHorizontalBookCard(context, book);
+                  return FadeInAnimation(
+                    delay: index * 2,
+                    child: _buildHorizontalBookCard(context, book),
+                  );
                 },
               ),
             ),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-              child: Text(
-                "Tendances actuelles",
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              child: FadeInAnimation(
+                delay: 2,
+                child: Text(
+                  "Tendances actuelles",
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -73,32 +81,43 @@ class HomeScreen extends StatelessWidget {
               itemCount: recentBooks.length,
               itemBuilder: (context, index) {
                 final book = recentBooks[index];
-                return ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      book.imagePath,
-                      width: 50,
-                      height: 75,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          Container(color: Colors.grey, width: 50, height: 75),
-                    ),
-                  ),
-                  title: Text(book.title,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: Text(book.author),
-                  onTap: () {
-                    Provider.of<HistoryProvider>(context, listen: false)
-                        .addToHistory(book);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BookDetailScreen(
-                            book: book, heroTag: 'home_vertical_${book.id}'),
+                return FadeInAnimation(
+                  delay: (index + 2) * 2, // Staggered delay
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        book.imagePath,
+                        width: 50,
+                        height: 75,
+                        fit: BoxFit.cover,
+                        frameBuilder:
+                            (context, child, frame, wasSynchronouslyLoaded) {
+                          if (wasSynchronouslyLoaded || frame != null) {
+                            return child;
+                          } else {
+                            return const ShimmerLoading(width: 50, height: 75);
+                          }
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                            color: Colors.grey, width: 50, height: 75),
                       ),
-                    );
-                  },
+                    ),
+                    title: Text(book.title,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text(book.author),
+                    onTap: () {
+                      Provider.of<HistoryProvider>(context, listen: false)
+                          .addToHistory(book);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BookDetailScreen(
+                              book: book, heroTag: 'home_vertical_${book.id}'),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -151,6 +170,15 @@ class HomeScreen extends StatelessWidget {
                     book.imagePath,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded || frame != null) {
+                        return child;
+                      } else {
+                        return const ShimmerLoading(
+                            width: double.infinity, height: double.infinity);
+                      }
+                    },
                     errorBuilder: (_, __, ___) => Container(
                       color: Colors.grey[300],
                       alignment: Alignment.center,
