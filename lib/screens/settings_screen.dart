@@ -14,7 +14,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Paramètres"),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple, // Removed
       ),
       body: ListView(
         children: [

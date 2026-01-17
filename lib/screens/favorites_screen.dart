@@ -17,7 +17,7 @@ class FavoritesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mes favoris"),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple, // Removed
       ),
       body: favoriteBooks.isEmpty
           ? Center(
