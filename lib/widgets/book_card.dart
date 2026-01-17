@@ -5,6 +5,8 @@ import '../models/book.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/history_provider.dart';
 import '../screens/book_detail_screen.dart';
+import 'shimmer_loading.dart';
+import 'like_button.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
@@ -74,6 +76,14 @@ class BookCard extends StatelessWidget {
                     width: 90, // Slightly larger
                     height: 130,
                     fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded || frame != null) {
+                        return child;
+                      } else {
+                        return const ShimmerLoading(width: 90, height: 130);
+                      }
+                    },
                     errorBuilder: (_, __, ___) => Container(
                       width: 90,
                       height: 130,
@@ -143,14 +153,14 @@ class BookCard extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 8),
                 child: Column(
                   children: [
-                    IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.grey[400],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LikeButton(
+                        isFavorite: isFavorite,
+                        onTap: () {
+                          favoritesProvider.toggleFavorite(book);
+                        },
                       ),
-                      onPressed: () {
-                        favoritesProvider.toggleFavorite(book);
-                      },
                     ),
                     if (book.favorites > 0)
                       Text(

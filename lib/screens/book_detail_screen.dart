@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
 import '../widgets/book_card.dart';
+import '../widgets/shimmer_loading.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -86,6 +87,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   color: Colors.black
                       .withValues(alpha: 0.2), // Darken image slightly
                   colorBlendMode: BlendMode.darken,
+                  frameBuilder:
+                      (context, child, frame, wasSynchronouslyLoaded) {
+                    if (wasSynchronouslyLoaded || frame != null) {
+                      return child;
+                    } else {
+                      return const ShimmerLoading(
+                          width: double.infinity, height: double.infinity);
+                    }
+                  },
                 ),
               ),
             ),
