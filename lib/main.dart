@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
+import 'providers/theme_provider.dart';
 import 'utils/data.dart';
 import 'screens/welcome_screen.dart';
 
@@ -14,11 +15,20 @@ void main() async {
   final favoritesProvider = FavoritesProvider();
   await favoritesProvider.loadFavorites(allBooks);
 
+  // Initialisation du provider d'historique
+  final historyProvider = HistoryProvider();
+  await historyProvider.loadHistory();
+
+  // Initialisation du thème
+  final themeProvider = ThemeProvider();
+  await themeProvider.loadTheme();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => favoritesProvider),
-        ChangeNotifierProvider(create: (_) => HistoryProvider()),
+        ChangeNotifierProvider(create: (_) => historyProvider),
+        ChangeNotifierProvider(create: (_) => themeProvider),
       ],
       child: const BookwiseApp(),
     ),
@@ -30,24 +40,45 @@ class BookwiseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bookwise',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        fontFamily: GoogleFonts.roboto().fontFamily, // Base font
-        textTheme: GoogleFonts.robotoTextTheme().copyWith(
-          // Global headers to Playfair Display
-          displayLarge: GoogleFonts.playfairDisplay(),
-          displayMedium: GoogleFonts.playfairDisplay(),
-          displaySmall: GoogleFonts.playfairDisplay(),
-          headlineLarge: GoogleFonts.playfairDisplay(),
-          headlineMedium: GoogleFonts.playfairDisplay(),
-          headlineSmall: GoogleFonts.playfairDisplay(),
-          titleLarge: GoogleFonts.playfairDisplay(),
-        ),
-      ),
-      home: const WelcomeScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Bookwise',
+          debugShowCheckedModeBanner: false,
+          themeMode: themeProvider.themeMode,
+          theme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+            brightness: Brightness.light,
+            fontFamily: GoogleFonts.roboto().fontFamily,
+            textTheme: GoogleFonts.robotoTextTheme().copyWith(
+              displayLarge: GoogleFonts.playfairDisplay(),
+              displayMedium: GoogleFonts.playfairDisplay(),
+              displaySmall: GoogleFonts.playfairDisplay(),
+              headlineLarge: GoogleFonts.playfairDisplay(),
+              headlineMedium: GoogleFonts.playfairDisplay(),
+              headlineSmall: GoogleFonts.playfairDisplay(),
+              titleLarge: GoogleFonts.playfairDisplay(),
+            ),
+          ),
+          darkTheme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+            brightness: Brightness.dark,
+            fontFamily: GoogleFonts.roboto().fontFamily,
+            scaffoldBackgroundColor: const Color(0xFF121212),
+            textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme)
+                .copyWith(
+              displayLarge: GoogleFonts.playfairDisplay(),
+              displayMedium: GoogleFonts.playfairDisplay(),
+              displaySmall: GoogleFonts.playfairDisplay(),
+              headlineLarge: GoogleFonts.playfairDisplay(),
+              headlineMedium: GoogleFonts.playfairDisplay(),
+              headlineSmall: GoogleFonts.playfairDisplay(),
+              titleLarge: GoogleFonts.playfairDisplay(),
+            ),
+          ),
+          home: const WelcomeScreen(),
+        );
+      },
     );
   }
 }
