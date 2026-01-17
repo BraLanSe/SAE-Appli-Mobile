@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/favorites_provider.dart';
 import '../widgets/book_card.dart';
+import 'main_screen.dart';
+
+import '../widgets/fade_in_animation.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -22,7 +25,8 @@ class FavoritesScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.favorite_border,
-                      size: 80, color: Colors.deepPurple.withOpacity(0.3)),
+                      size: 80,
+                      color: Colors.deepPurple.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   const Text(
                     "Aucun favori pour le moment",
@@ -40,13 +44,7 @@ class FavoritesScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
-                      // Ideally switch to Explorer tab. For now, we rely on user using nav bar
-                      // Or implement a simple snackbar hint
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                "Utilisez l'onglet Explorer pour découvrir des livres!")),
-                      );
+                      MainScreen.switchToTab(context, 1);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
@@ -66,7 +64,9 @@ class FavoritesScreen extends StatelessWidget {
                   const SizedBox(height: 0), // Card has its own margin
               itemBuilder: (context, index) {
                 final book = favoriteBooks[index];
-                return BookCard(book: book, heroTag: book.id);
+                return FadeInAnimation(
+                    delay: index,
+                    child: BookCard(book: book, heroTag: book.id));
               },
             ),
     );

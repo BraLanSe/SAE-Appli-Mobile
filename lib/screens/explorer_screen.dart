@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
 import '../widgets/book_card.dart';
+import '../widgets/fade_in_animation.dart';
 
 class ExplorerScreen extends StatefulWidget {
   const ExplorerScreen({super.key});
@@ -199,9 +200,12 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                       itemCount: filteredBooks.length,
                       itemBuilder: (context, index) {
                         final book = filteredBooks[index];
-                        return BookCard(
-                          book: book,
-                          heroTag: 'explorer_${book.id}',
+                        return FadeInAnimation(
+                          delay: index,
+                          child: BookCard(
+                            book: book,
+                            heroTag: 'explorer_${book.id}',
+                          ),
                         );
                       },
                     ),

@@ -28,7 +28,7 @@ class BookCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12), // Requested radius
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05), // Lighter shadow
+            color: Colors.black.withValues(alpha: 0.05), // Lighter shadow
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -121,7 +121,7 @@ class BookCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple.withOpacity(0.1),
+                          color: Colors.deepPurple.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

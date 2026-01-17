@@ -7,12 +7,24 @@ import 'history_screen.dart';
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
+  static void switchToTab(BuildContext context, int index) {
+    final _MainScreenState? state =
+        context.findAncestorStateOfType<_MainScreenState>();
+    state?.setIndex(index);
+  }
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  void setIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   final List<Widget> _screens = [
     const HomeScreen(),

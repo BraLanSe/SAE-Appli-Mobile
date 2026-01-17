@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
+import 'package:provider/provider.dart';
+import '../providers/history_provider.dart';
+
 import '../utils/data.dart';
 import '../screens/book_detail_screen.dart';
 
@@ -86,6 +89,8 @@ class HomeScreen extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.w600)),
                   subtitle: Text(book.author),
                   onTap: () {
+                    Provider.of<HistoryProvider>(context, listen: false)
+                        .addToHistory(book);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -113,7 +118,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -122,6 +127,8 @@ class HomeScreen extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
+          Provider.of<HistoryProvider>(context, listen: false)
+              .addToHistory(book);
           Navigator.push(
             context,
             MaterialPageRoute(

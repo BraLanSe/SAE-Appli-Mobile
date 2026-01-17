@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/history_provider.dart';
 import '../widgets/book_card.dart';
+import 'main_screen.dart';
+
+import '../widgets/fade_in_animation.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -29,7 +32,8 @@ class HistoryScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.history,
-                      size: 80, color: Colors.deepPurple.withOpacity(0.3)),
+                      size: 80,
+                      color: Colors.deepPurple.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   const Text(
                     "Aucun historique",
@@ -47,11 +51,7 @@ class HistoryScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                "Utilisez l'onglet Explorer pour découvrir des livres!")),
-                      );
+                      MainScreen.switchToTab(context, 1);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
@@ -71,7 +71,10 @@ class HistoryScreen extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 0),
               itemBuilder: (context, index) {
                 final book = historyBooks[index];
-                return BookCard(book: book, heroTag: book.id);
+                return FadeInAnimation(
+                  delay: index,
+                  child: BookCard(book: book, heroTag: book.id),
+                );
               },
             ),
     );
