@@ -28,12 +28,13 @@ class FavoritesScreen extends StatelessWidget {
                       size: 80,
                       color: Colors.deepPurple.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     "Aucun favori pour le moment",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Playfair Display'),
+                        fontFamily: 'Playfair Display',
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                   const SizedBox(height: 8),
                   const Text(

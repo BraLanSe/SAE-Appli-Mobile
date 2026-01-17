@@ -115,24 +115,46 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
               ),
               const SizedBox(height: 30),
-              const FadeInAnimation(
+              FadeInAnimation(
                 delay: 4,
-                child: Text(
-                  'Bienvenue sur Bookwise!',
-                  style: TextStyle(
-                    fontSize: 32,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Playfair Display',
-                    shadows: [
-                      Shadow(
-                        color: Colors.black26,
-                        offset: Offset(0, 2),
-                        blurRadius: 4,
+                child: Column(
+                  children: [
+                    const Text(
+                      'BookWise',
+                      style: TextStyle(
+                        fontSize: 48,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Playfair Display',
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Votre boussole littéraire",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontStyle: FontStyle.italic,
+                        letterSpacing: 1.2,
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(0, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
