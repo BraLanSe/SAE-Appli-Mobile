@@ -1,101 +1,173 @@
-# BookWise (Livrable 1)
-# Bookwise
+📚 BookWise – Application mobile de recommandation de livres
+📌 Présentation du projet
 
-Bookwise est une application mobile Flutter pour gérer, consulter et suivre vos livres préférés. Elle propose des fonctionnalités de recommandation, un historique de lecture et la gestion de favoris. L'application est multi-plateformes (Android, iOS, Web, Windows, macOS, Linux).
+BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
+Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
 
----
+Contrairement à de nombreuses applications existantes, BookWise :
 
-## Fonctionnalités
+ne nécessite aucun compte utilisateur,
 
-* **Accueil** : Page principale présentant les livres et catégories.
-* **Détails d'un livre** : Informations complètes sur chaque livre.
-* **Recommandations** : Suggestions basées sur les préférences de l'utilisateur.
-* **Favoris** : Ajouter et consulter les livres favoris.
-* **Historique** : Suivi des livres consultés ou lus.
-* **Multi-plateformes** : Android, iOS, Web, Windows, macOS et Linux.
-* **Gestion des assets** : Couvertures de livres et icônes.
+fonctionne entièrement en local,
 
----
+ne collecte aucune donnée personnelle externe.
 
-## Arborescence du projet
+🎯 Objectifs de l’application
 
-```
-C:.
-├── android/         # Code et configurations Android
-├── ios/             # Code et configurations iOS
-├── lib/             # Code Dart principal
-│   ├── models/      # Modèles de données
-│   ├── providers/   # Providers pour gestion d'état
-│   ├── screens/     # Écrans de l'application
-│   ├── services/    # Services, par ex. recommandations
-│   ├── utils/       # Fonctions utilitaires
-│   └── widgets/     # Widgets réutilisables
-├── assets/          # Images et autres ressources
-├── web/             # Configuration et assets Web
-├── windows/         # Configuration Windows
-├── macos/           # Configuration macOS
-├── linux/           # Configuration Linux
-└── test/            # Tests unitaires et widgets
-```
+Aider l’utilisateur à trouver des livres adaptés à ses goûts
 
----
+Proposer une expérience de lecture simple, fluide et personnalisée
 
-## Installation
+Mettre en avant la confidentialité et l’autonomie de l’utilisateur
 
-1. **Cloner le dépôt :**
+Exploiter les habitudes de lecture pour améliorer les recommandations
 
-```bash
-git clone https://github.com/BraLanSe/SAE-Appli-Mobile.git
-cd SAE-Appli-Mobile
-```
+🚀 Fonctionnalités principales
+🏠 Page de bienvenue
 
-2. **Installer les dépendances Flutter :**
+Affichage du logo et du slogan
 
-```bash
+Accès à l’application via un bouton de démarrage
+
+📖 Catalogue de livres (page d’accueil)
+
+Liste complète des livres disponibles
+
+Barre de recherche (par titre ou auteur)
+
+Systèmes de tri :
+
+A → Z
+
+Z → A
+
+Popularité
+
+Date d’ajout
+
+Filtres par genres :
+
+Romantique
+
+Science-fiction
+
+Policier
+
+etc.
+
+⭐ Page de recommandations
+
+Suggestions personnalisées basées sur :
+
+les livres consultés
+
+les favoris
+
+le temps de lecture
+
+les genres préférés
+
+❤️ Favoris
+
+Ajout et suppression de livres favoris
+
+Accès rapide aux coups de cœur de l’utilisateur
+
+🕘 Historique de lecture
+
+Suivi des livres consultés
+
+Utilisé pour affiner les recommandations
+
+📊 Statistiques de lecture
+
+Temps total de lecture
+
+Temps moyen par livre
+
+Genres préférés
+
+Nombre de livres consultés
+
+Nombre de favoris
+
+Livres enregistrés localement
+
+🧠 Fonctionnement des données
+
+Les données des livres sont stockées localement (SQLite)
+
+Les statistiques et comportements de lecture sont calculés sur l’appareil
+
+Aucun appel à une API externe
+
+Aucune donnée envoyée sur Internet
+
+🛠️ Technologies utilisées
+
+Flutter (Dart)
+
+SQLite (stockage local)
+
+Provider (gestion d’état)
+
+Git / GitHub (versioning et collaboration)
+
+🗂️ Structure du projet
+lib/
+├── models/        # Modèles de données (Book, etc.)
+├── providers/     # Gestion de l’état (Provider)
+├── screens/       # Écrans de l’application
+├── services/      # Accès aux données et logique métier
+├── utils/         # Fonctions utilitaires
+└── widgets/       # Widgets réutilisables
+
+
+Les ressources graphiques sont stockées dans :
+
+assets/images/
+
+⚙️ Installation et lancement
+Prérequis
+
+Flutter installé
+
+Android Studio ou VS Code
+
+Un émulateur ou un appareil Android
+
+Lancer le projet
 flutter pub get
-```
-
-3. **Exécuter l'application :**
-
-* Sur mobile Android/iOS :
-
-```bash
 flutter run
-```
 
-* Sur Web :
+🔍 Axes d’amélioration
 
-```bash
-flutter run -d chrome
-```
+Modernisation de l’interface graphique
 
-4. **Pour construire une version release :**
+Ajout d’un système de notifications de recommandations
 
-```bash
-flutter build apk       # Android
-flutter build ios       # iOS
-flutter build web       # Web
-flutter build windows   # Windows
-flutter build macos     # macOS
-flutter build linux     # Linux
-```
+Enrichissement de la base de données de livres
 
----
+Optimisation de l’algorithme de recommandation
 
-## Dépendances principales
+👥 Équipe – Groupe MakeMake
 
-* Flutter SDK
-* `provider` pour la gestion d'état
-* `shared_preferences` pour le stockage léger
-* `fl_chart` pour les graphiques (si nécessaire)
-* `google_fonts` pour les polices
+Tassadit Ouzia
 
----
+Bradley Landim
 
+Anouar Rouibi
 
-👤 Auteur
+Hocine Zared
 
-Projet réalisé par Tassadit, Bradley, Hocine, Hichem, Yacine, Mohamad, Anouar
+Hichem Zenaini
 
+Mohammed Essaoudi
 
-BUT 3 INFO
+Yacine Sellaoui
+
+🎓 Contexte universitaire
+
+Projet réalisé dans le cadre de la
+SAÉ 5.01 – Développement avancé
+Encadrante : Mme Marie-Eva Lesaunier
