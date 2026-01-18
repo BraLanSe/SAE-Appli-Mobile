@@ -1,16 +1,15 @@
-// lib/screens/home_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/book.dart';
 import '../services/database_service.dart';
 import '../widgets/book_card.dart';
+import '../theme/app_theme.dart';
+import '../providers/theme_provider.dart';
+
+// Imports des écrans fonctionnels
 import 'favorites_screen.dart';
 import 'history_screen.dart';
-import 'recommended_screen.dart';
 import 'stats_screen.dart';
-import '../theme/app_theme.dart';
-import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,38 +19,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
   final DatabaseService _db = DatabaseService();
+  final TextEditingController _searchController = TextEditingController();
 
   List<Book> _books = [];
+  List<Book> _filteredBooks = [];
   bool _loading = true;
+  bool _isSearching = false;
+  String _selectedGenre = "All";
 
-  String _searchQuery = "";
-  String? _selectedGenre = "All";
-  String _selectedSort = "A-Z";
-
-  final List<String> genres = [
-    "All",
-    "Fiction",
-    "Science-Fiction",
-    "Fantasy",
-    "Roman Philosophique",
-    "Classique",
-    "Horreur",
-    "Romance",
-    "Poésie",
-    "Thriller Psychologique",
-    "Cyberpunk",
-    "Satire",
-    "Drame",
-  ];
-
-  final List<String> sortOptions = [
-    "A-Z",
-    "Z-A",
-    "Plus populaire",
-    "Date ajout",
-  ];
+  // Liste des genres basés sur ta BDD
+  final List<String> _genres = ["All", "Fiction", "Sci-Fi", "Fantasy", "Philosophie", "Thriller"];
 
   @override
   void initState() {
@@ -64,230 +42,172 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
     setState(() {
       _books = books;
+      _filteredBooks = books;
       _loading = false;
     });
   }
 
-  List<Book> get filteredBooks {
-    List<Book> books = [..._books];
-
-    // Filtrer par genre
-    if (_selectedGenre != "All") {
-      books = books
-          .where((b) => b.genre.toLowerCase() == _selectedGenre!.toLowerCase())
-          .toList();
-    }
-
-    // Filtrer par recherche : titre OU auteur
-    if (_searchQuery.isNotEmpty) {
-      final queryLower = _searchQuery.toLowerCase();
-      books = books.where((b) =>
-          b.title.toLowerCase().contains(queryLower) ||
-          b.author.toLowerCase().contains(queryLower)
-      ).toList();
-    }
-
-    // Tri
-    switch (_selectedSort) {
-      case "A-Z":
-        books.sort((a, b) => a.title.compareTo(b.title));
-        break;
-      case "Z-A":
-        books.sort((a, b) => b.title.compareTo(a.title));
-        break;
-      case "Plus populaire":
-        books.sort((a, b) => (b.popularity ?? 0).compareTo(a.popularity ?? 0));
-        break;
-      case "Date ajout":
-        books.sort((a, b) =>
-            (b.dateAdded ?? DateTime(2000)).compareTo(a.dateAdded ?? DateTime(2000)));
-        break;
-    }
-
-    return books;
+  void _filterBooks() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredBooks = _books.where((book) {
+        final matchesGenre = _selectedGenre == "All" || book.genre.toLowerCase() == _selectedGenre.toLowerCase();
+        final matchesSearch = book.title.toLowerCase().contains(query) || book.author.toLowerCase().contains(query);
+        return matchesGenre && matchesSearch;
+      }).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: AppTheme.backgroundWhite,
+      
+      // --- MENU LATÉRAL (DRAWER) FONCTIONNEL ---
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primaryViolet, AppTheme.secondaryViolet],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Logo BookWise (Tu peux remettre ton image asset ici)
+                  const Icon(Icons.auto_stories, size: 50, color: Colors.white),
+                  const SizedBox(height: 10),
+                  const Text("BookWise", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            // Ces liens fonctionnent et mènent vers tes écrans existants
+            ListTile(
+              leading: const Icon(Icons.favorite, color: AppTheme.primaryViolet),
+              title: const Text('Mes Favoris'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoritesScreen())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.history, color: AppTheme.primaryViolet),
+              title: const Text('Historique de lecture'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart, color: AppTheme.primaryViolet),
+              title: const Text('Statistiques'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatsScreen())),
+            ),
+            const Divider(),
+            ListTile(
+              leading: Icon(Provider.of<ThemeProvider>(context).isDarkMode ? Icons.light_mode : Icons.dark_mode),
+              title: Text(Provider.of<ThemeProvider>(context).isDarkMode ? 'Mode Clair' : 'Mode Sombre'),
+              onTap: () => Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
+            ),
+          ],
+        ),
+      ),
+
       appBar: AppBar(
-        title: const Text("Bookwise"),
-        backgroundColor: Colors.transparent,
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                onChanged: (_) => _filterBooks(),
+                decoration: const InputDecoration(
+                  hintText: "Titre, auteur...",
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+                style: const TextStyle(color: Colors.black87),
+              )
+            : const Text("Catalogue", style: TextStyle(fontWeight: FontWeight.bold)), // TITRE MODIFIÉ
         actions: [
           IconButton(
-            icon: Icon(
-              Provider.of<ThemeProvider>(context).isDarkMode
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-            ),
-            tooltip: "Mode sombre",
-            onPressed: () => Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.favorite),
-            tooltip: "Favoris",
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: AppTheme.primaryViolet),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: "Historique",
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const HistoryScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            tooltip: "Statistiques",
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const StatsScreen()),
-              );
+              setState(() {
+                if (_isSearching) {
+                  _isSearching = false;
+                  _searchController.clear();
+                  _filterBooks();
+                } else {
+                  _isSearching = true;
+                }
+              });
             },
           ),
         ],
       ),
-      body: Container(
-        decoration: AppTheme.backgroundGradient(context),
-        child: SafeArea(
-          child: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1B24) : Colors.white.withOpacity(0.95),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Barre de recherche
-                TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: "Rechercher un livre ou un auteur...",
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+
+      body: Column(
+        children: [
+          // Filtres
+          Container(
+            height: 60,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _genres.length,
+              itemBuilder: (context, index) {
+                final genre = _genres[index];
+                final isSelected = _selectedGenre == genre;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: FilterChip(
+                    label: Text(genre),
+                    selected: isSelected,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        _selectedGenre = genre;
+                        _filterBooks();
+                      });
+                    },
+                    backgroundColor: Colors.white,
+                    selectedColor: AppTheme.primaryViolet.withOpacity(0.2),
+                    labelStyle: TextStyle(
+                      color: isSelected ? AppTheme.primaryViolet : Colors.black54,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
-                  ),
-                  onChanged: (value) {
-                    setState(() => _searchQuery = value);
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // Bouton vers recommandations
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.star, color: Colors.white),
-                  label: const Text(
-                    "Voir recommandations",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RecommendationsScreen()),
-                    );
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // Filtres par genre
-                SizedBox(
-                  height: 45,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: genres.map((genre) {
-                      final bool selected = _selectedGenre == genre;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(genre),
-                          selected: selected,
-                          selectedColor: Colors.deepPurple,
-                          labelStyle: TextStyle(
-                            color: selected ? Colors.white : Colors.black,
-                          ),
-                          onSelected: (_) {
-                            setState(() => _selectedGenre = genre);
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Tri
-                Row(
-                  children: [
-                    const Text(
-                      "Trier par : ",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: isSelected ? AppTheme.primaryViolet : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    const SizedBox(width: 10),
-                    DropdownButton<String>(
-                      value: _selectedSort,
-                      items: sortOptions
-                          .map((sort) => DropdownMenuItem(
-                                value: sort,
-                                child: Text(sort),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() => _selectedSort = value!);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // Liste des livres
-                Expanded(
-                  child: _loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : filteredBooks.isEmpty
-                          ? const Center(
-                              child: Text(
-                                "Aucun livre trouvé",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            )
-                          : RefreshIndicator(
-                              onRefresh: _loadBooks,
-                              child: ListView.builder(
-                                itemCount: filteredBooks.length,
-                                itemBuilder: (context, index) {
-                                  final book = filteredBooks[index];
-                                  return BookCard(
-                                    book: book,
-                                    heroTag: book.id,
-                                  );
-                                },
-                              ),
-                            ),
-                ),
-              ],
+                    showCheckmark: false,
+                  ),
+                );
+              },
             ),
           ),
-        ),
+
+          // Grille de livres
+          Expanded(
+            child: _loading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredBooks.isEmpty
+                    ? const Center(child: Text("Aucun livre trouvé."))
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.65,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: _filteredBooks.length,
+                        itemBuilder: (context, index) {
+                          return BookCard(book: _filteredBooks[index], heroTag: 'home_${_filteredBooks[index].id}');
+                        },
+                      ),
+          ),
+        ],
       ),
     );
   }
