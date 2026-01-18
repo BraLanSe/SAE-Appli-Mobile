@@ -1,119 +1,118 @@
-📚 BookWise – Application mobile de recommandation de livres
-📌 Présentation du projet
+# BookWise
+
+Application mobile de recommandation de livres  
+SAÉ 5.01 – Développement avancé
+
+
+## Présentation du projet
 
 BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
 Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
 
 Contrairement à de nombreuses applications existantes, BookWise :
 
-ne nécessite aucun compte utilisateur,
+* ne nécessite aucun compte utilisateur,
 
-fonctionne entièrement en local,
+* fonctionne entièrement en local,
 
-ne collecte aucune donnée personnelle externe.
+* ne collecte aucune donnée personnelle externe.
 
-🎯 Objectifs de l’application
 
-Aider l’utilisateur à trouver des livres adaptés à ses goûts
+## Objectifs
 
-Proposer une expérience de lecture simple, fluide et personnalisée
+* Aider l’utilisateur à trouver des livres adaptés à ses goûts
 
-Mettre en avant la confidentialité et l’autonomie de l’utilisateur
+* Proposer une expérience de lecture simple, fluide et personnalisée
 
-Exploiter les habitudes de lecture pour améliorer les recommandations
+* Mettre en avant la confidentialité et l’autonomie de l’utilisateur
 
-🚀 Fonctionnalités principales
+* Exploiter les habitudes de lecture pour améliorer les recommandations
+
+
+## Fonctionnalités principales
 🏠 Page de bienvenue
 
-Affichage du logo et du slogan
+* Affichage du logo et du slogan
 
-Accès à l’application via un bouton de démarrage
+* Accès à l’application via un bouton de démarrage
 
 📖 Catalogue de livres (page d’accueil)
 
-Liste complète des livres disponibles
+* Liste complète des livres disponibles
 
-Barre de recherche (par titre ou auteur)
+* Barre de recherche (par titre ou auteur)
 
-Systèmes de tri :
+* Systèmes de tri :
 
-A → Z
+  * A → Z
 
-Z → A
+  * Z → A
 
-Popularité
+  * Popularité
 
-Date d’ajout
+  * Date d’ajout
 
-Filtres par genres :
+* Filtres par genres :
 
-Romantique
+  * Romantique
 
-Science-fiction
+  * Science-fiction
 
-Policier
+  * Policier
 
 etc.
 
 ⭐ Page de recommandations
 
-Suggestions personnalisées basées sur :
+  * Suggestions personnalisées basées sur :
 
-les livres consultés
+    * les livres consultés
 
-les favoris
+    * les favoris
 
-le temps de lecture
+    * le temps de lecture
 
-les genres préférés
+    * les genres préférés
 
 ❤️ Favoris
 
-Ajout et suppression de livres favoris
+* Ajout et suppression de livres favoris
 
-Accès rapide aux coups de cœur de l’utilisateur
+* Accès rapide aux coups de cœur de l’utilisateur
 
 🕘 Historique de lecture
 
-Suivi des livres consultés
+* Suivi des livres consultés
 
-Utilisé pour affiner les recommandations
+* Utilisé pour affiner les recommandations
 
 📊 Statistiques de lecture
 
-Temps total de lecture
+* Temps total de lecture
 
-Temps moyen par livre
+* Temps moyen par livre
 
-Genres préférés
+* Genres préférés
 
-Nombre de livres consultés
+* Nombre de livres consultés
 
-Nombre de favoris
+* Nombre de favoris
 
-Livres enregistrés localement
+* Livres enregistrés localement
 
-🧠 Fonctionnement des données
 
-Les données des livres sont stockées localement (SQLite)
+## Fonctionnement des recommandations
 
-Les statistiques et comportements de lecture sont calculés sur l’appareil
+Les recommandations sont basées sur :
+- les livres consultés
+- les livres ajoutés aux favoris
+- le temps de lecture
+- les genres préférés  
+Toutes les données sont traitées localement.
 
-Aucun appel à une API externe
 
-Aucune donnée envoyée sur Internet
+## Structure du projet
 
-🛠️ Technologies utilisées
-
-Flutter (Dart)
-
-SQLite (stockage local)
-
-Provider (gestion d’état)
-
-Git / GitHub (versioning et collaboration)
-
-🗂️ Structure du projet
 lib/
 ├── models/        # Modèles de données (Book, etc.)
 ├── providers/     # Gestion de l’état (Provider)
@@ -123,51 +122,425 @@ lib/
 └── widgets/       # Widgets réutilisables
 
 
-Les ressources graphiques sont stockées dans :
+## Technologies utilisées
 
-assets/images/
+* Flutter (Dart)
 
-⚙️ Installation et lancement
+* SQLite (stockage local)
+
+* Provider (gestion d’état)
+
+* Git / GitHub
+
+
+## Installation et exécution
+
 Prérequis
 
-Flutter installé
+* Flutter installé
 
-Android Studio ou VS Code
+* Android Studio ou VS Code
 
-Un émulateur ou un appareil Android
+* Émulateur ou appareil Android
 
-Lancer le projet
+
+## Lancer le projet
+
 flutter pub get
 flutter run
 
-🔍 Axes d’amélioration
 
-Modernisation de l’interface graphique
+## Axes d’amélioration
 
-Ajout d’un système de notifications de recommandations
+* Amélioration de l’interface graphique
 
-Enrichissement de la base de données de livres
+* Ajout de notifications de recommandations
 
-Optimisation de l’algorithme de recommandation
+* Enrichissement de la base de données de livres
 
-👥 Équipe – Groupe MakeMake
 
-Tassadit Ouzia
+## Équipe
 
-Bradley Landim
+Groupe MakeMake :
 
-Anouar Rouibi
+* Tassadit Ouzia
 
-Hocine Zared
+* Bradley Landim
 
-Hichem Zenaini
+* Anouar Rouibi
 
-Mohammed Essaoudi
+* Hocine Zared
 
-Yacine Sellaoui
+* Hichem Zenaini
 
-🎓 Contexte universitaire
+* Mohammed Essaoudi
+
+* Yacine Sellaoui
+
+## Contexte universitaire
+
+# BookWise
+
+Application mobile de recommandation de livres  
+SAÉ 5.01 – Développement avancé
+
+
+## Présentation du projet
+
+BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
+Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
+
+Contrairement à de nombreuses applications existantes, BookWise :
+
+* ne nécessite aucun compte utilisateur,
+
+* fonctionne entièrement en local,
+
+* ne collecte aucune donnée personnelle externe.
+
+
+## Objectifs
+
+* Aider l’utilisateur à trouver des livres adaptés à ses goûts
+
+* Proposer une expérience de lecture simple, fluide et personnalisée
+
+* Mettre en avant la confidentialité et l’autonomie de l’utilisateur
+
+* Exploiter les habitudes de lecture pour améliorer les recommandations
+
+
+## Fonctionnalités principales
+🏠 Page de bienvenue
+
+* Affichage du logo et du slogan
+
+* Accès à l’application via un bouton de démarrage
+
+📖 Catalogue de livres (page d’accueil)
+
+* Liste complète des livres disponibles
+
+* Barre de recherche (par titre ou auteur)
+
+* Systèmes de tri :
+
+  * A → Z
+
+  * Z → A
+
+  * Popularité
+
+  * Date d’ajout
+
+* Filtres par genres :
+
+  * Romantique
+
+  * Science-fiction
+
+  * Policier
+
+etc.
+
+⭐ Page de recommandations
+
+  * Suggestions personnalisées basées sur :
+
+    * les livres consultés
+
+    * les favoris
+
+    * le temps de lecture
+
+    * les genres préférés
+
+❤️ Favoris
+
+* Ajout et suppression de livres favoris
+
+* Accès rapide aux coups de cœur de l’utilisateur
+
+🕘 Historique de lecture
+
+* Suivi des livres consultés
+
+* Utilisé pour affiner les recommandations
+
+📊 Statistiques de lecture
+
+* Temps total de lecture
+
+* Temps moyen par livre
+
+* Genres préférés
+
+* Nombre de livres consultés
+
+* Nombre de favoris
+
+* Livres enregistrés localement
+
+
+## Fonctionnement des recommandations
+
+Les recommandations sont basées sur :
+- les livres consultés
+- les livres ajoutés aux favoris
+- le temps de lecture
+- les genres préférés  
+Toutes les données sont traitées localement.
+
+
+## Structure du projet
+
+lib/
+├── models/        # Modèles de données (Book, etc.)
+├── providers/     # Gestion de l’état (Provider)
+├── screens/       # Écrans de l’application
+├── services/      # Accès aux données et logique métier
+├── utils/         # Fonctions utilitaires
+└── widgets/       # Widgets réutilisables
+
+
+## Technologies utilisées
+
+* Flutter (Dart)
+
+* SQLite (stockage local)
+
+* Provider (gestion d’état)
+
+* Git / GitHub
+
+
+## Installation et exécution
+
+Prérequis
+
+* Flutter installé
+
+* Android Studio ou VS Code
+
+* Émulateur ou appareil Android
+
+
+## Lancer le projet
+
+flutter pub get
+flutter run
+
+
+## Axes d’amélioration
+
+* Amélioration de l’interface graphique
+
+* Ajout de notifications de recommandations
+
+* Enrichissement de la base de données de livres
+
+
+## Équipe
+
+Groupe MakeMake :
+
+* Tassadit Ouzia
+
+* Bradley Landim
+
+* Anouar Rouibi
+
+* Hocine Zared
+
+* Hichem Zenaini
+
+* Mohammed Essaoudi
+
+* Yacine Sellaoui
+
+## Contexte universitaire
+
+# BookWise
+
+Application mobile de recommandation de livres  
+SAÉ 5.01 – Développement avancé
+
+
+## Présentation du projet
+
+BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
+Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
+
+Contrairement à de nombreuses applications existantes, BookWise :
+
+* ne nécessite aucun compte utilisateur,
+
+* fonctionne entièrement en local,
+
+* ne collecte aucune donnée personnelle externe.
+
+
+## Objectifs
+
+* Aider l’utilisateur à trouver des livres adaptés à ses goûts
+
+* Proposer une expérience de lecture simple, fluide et personnalisée
+
+* Mettre en avant la confidentialité et l’autonomie de l’utilisateur
+
+* Exploiter les habitudes de lecture pour améliorer les recommandations
+
+
+## Fonctionnalités principales
+🏠 Page de bienvenue
+
+* Affichage du logo et du slogan
+
+* Accès à l’application via un bouton de démarrage
+
+📖 Catalogue de livres (page d’accueil)
+
+* Liste complète des livres disponibles
+
+* Barre de recherche (par titre ou auteur)
+
+* Systèmes de tri :
+
+  * A → Z
+
+  * Z → A
+
+  * Popularité
+
+  * Date d’ajout
+
+* Filtres par genres :
+
+  * Romantique
+
+  * Science-fiction
+
+  * Policier
+
+etc.
+
+⭐ Page de recommandations
+
+  * Suggestions personnalisées basées sur :
+
+    * les livres consultés
+
+    * les favoris
+
+    * le temps de lecture
+
+    * les genres préférés
+
+❤️ Favoris
+
+* Ajout et suppression de livres favoris
+
+* Accès rapide aux coups de cœur de l’utilisateur
+
+🕘 Historique de lecture
+
+* Suivi des livres consultés
+
+* Utilisé pour affiner les recommandations
+
+📊 Statistiques de lecture
+
+* Temps total de lecture
+
+* Temps moyen par livre
+
+* Genres préférés
+
+* Nombre de livres consultés
+
+* Nombre de favoris
+
+* Livres enregistrés localement
+
+
+## Fonctionnement des recommandations
+
+Les recommandations sont basées sur :
+- les livres consultés
+- les livres ajoutés aux favoris
+- le temps de lecture
+- les genres préférés  
+Toutes les données sont traitées localement.
+
+
+## Structure du projet
+
+lib/
+├── models/        # Modèles de données (Book, etc.)
+├── providers/     # Gestion de l’état (Provider)
+├── screens/       # Écrans de l’application
+├── services/      # Accès aux données et logique métier
+├── utils/         # Fonctions utilitaires
+└── widgets/       # Widgets réutilisables
+
+
+## Technologies utilisées
+
+* Flutter (Dart)
+
+* SQLite (stockage local)
+
+* Provider (gestion d’état)
+
+* Git / GitHub
+
+
+## Installation et exécution
+
+Prérequis
+
+* Flutter installé
+
+* Android Studio ou VS Code
+
+* Émulateur ou appareil Android
+
+
+## Lancer le projet
+
+flutter pub get
+flutter run
+
+
+## Axes d’amélioration
+
+* Amélioration de l’interface graphique
+
+* Ajout de notifications de recommandations
+
+* Enrichissement de la base de données de livres
+
+
+## Équipe
+
+Groupe MakeMake :
+
+* Tassadit Ouzia
+
+* Bradley Landim
+
+* Anouar Rouibi
+
+* Hocine Zared
+
+* Hichem Zenaini
+
+* Mohammed Essaoudi
+
+* Yacine Sellaoui
+
+## Contexte universitaire
 
 Projet réalisé dans le cadre de la
 SAÉ 5.01 – Développement avancé
-Encadrante : Mme Marie-Eva Lesaunier
+
