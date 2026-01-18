@@ -377,7 +377,10 @@ class HomeScreen extends StatelessWidget {
           onTap: () {
             final provider =
                 Provider.of<FilterProvider>(context, listen: false);
-            provider.setGenre(label == "Tous" ? "All" : label);
+            String value = label;
+            if (label == "Tous") value = "All";
+            if (label == "Sci-Fi") value = "Science-Fiction";
+            provider.setGenre(value);
             MainScreen.switchToTab(context, 1);
           },
           child: Container(
