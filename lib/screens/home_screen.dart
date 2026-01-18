@@ -10,6 +10,7 @@ import '../screens/book_detail_screen.dart';
 import '../widgets/fade_in_animation.dart';
 import '../providers/filter_provider.dart';
 import '../services/recommendation_engine.dart'; // Added
+import '../models/recommendation_result.dart'; // Added
 import 'main_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -33,7 +34,9 @@ class HomeScreen extends StatelessWidget {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
 
     // Compute recommendations dynamically
-    final List<Book> recommendedBooks = RecommendationEngine.compute(
+    // Compute recommendations dynamically
+    final List<RecommendationResult> recommendedResults =
+        RecommendationEngine.compute(
       allBooks: allBooks,
       userHistory: historyProvider.history,
       userFavorites: favoritesProvider.favorites,
@@ -258,12 +261,12 @@ class HomeScreen extends StatelessWidget {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: recommendedBooks.length,
+                itemCount: recommendedResults.length,
                 itemBuilder: (context, index) {
-                  final book = recommendedBooks[index];
+                  final result = recommendedResults[index];
                   return FadeInAnimation(
                     delay: index * 2,
-                    child: _buildHorizontalBookCard(context, book),
+                    child: _buildHorizontalBookCard(context, result),
                   );
                 },
               ),
@@ -396,9 +399,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalBookCard(BuildContext context, Book book) {
+  Widget _buildHorizontalBookCard(
+      BuildContext context, RecommendationResult result) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    final book = result.book;
 
     return Container(
       width: 150, // Slightly simpler width
@@ -411,7 +416,10 @@ class HomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (_) => BookDetailScreen(
-                  book: book, heroTag: 'home_carousel_${book.id}'),
+                book: book,
+                heroTag: 'home_carousel_${book.id}',
+                matchPercentage: result.matchPercentage,
+              ),
             ),
           );
         },
@@ -420,24 +428,55 @@ class HomeScreen extends StatelessWidget {
           children: [
             Hero(
               tag: 'home_carousel_${book.id}',
-              child: Container(
-                height: 220,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isDarkMode
-                          ? Colors.black.withValues(alpha: 0.3)
-                          : Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+              child: Stack(
+                children: [
+                  Container(
+                    height: 220,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isDarkMode
+                              ? Colors.black.withValues(alpha: 0.3)
+                              : Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      image: DecorationImage(
+                        image: AssetImage(book.imagePath),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ],
-                  image: DecorationImage(
-                    image: AssetImage(book.imagePath),
-                    fit: BoxFit.cover,
                   ),
-                ),
+                  if (result.matchPercentage > 0)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                            )
+                          ],
+                        ),
+                        child: Text(
+                          "${result.matchPercentage}%",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -452,12 +491,13 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             Text(
-              book.author,
+              result.reason,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12,
-                color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                fontSize: 11,
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

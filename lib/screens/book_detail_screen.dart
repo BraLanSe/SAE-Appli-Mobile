@@ -10,9 +10,14 @@ import '../widgets/shimmer_loading.dart';
 class BookDetailScreen extends StatefulWidget {
   final Book book;
   final String heroTag;
+  final int? matchPercentage;
 
-  const BookDetailScreen(
-      {super.key, required this.book, required this.heroTag});
+  const BookDetailScreen({
+    super.key,
+    required this.book,
+    required this.heroTag,
+    this.matchPercentage,
+  });
 
   @override
   State<BookDetailScreen> createState() => _BookDetailScreenState();
@@ -161,6 +166,36 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       ),
                     ),
                   ),
+                  if (widget.matchPercentage != null &&
+                      widget.matchPercentage! > 0) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: Colors.green.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.auto_awesome,
+                              size: 16, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Text(
+                            "${widget.matchPercentage}% de compatibilité",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 24),
                   Text(
                     "Description",
