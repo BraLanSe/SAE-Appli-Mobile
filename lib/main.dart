@@ -3,41 +3,36 @@ import 'package:provider/provider.dart';
 
 import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/welcome_screen.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final favoritesProvider = FavoritesProvider();
-  await favoritesProvider.loadFavorites();
-
-  final historyProvider = HistoryProvider();
-  await historyProvider.loadHistory();
-
+import 'theme/app_theme.dart';
+void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => favoritesProvider),
-        ChangeNotifierProvider(create: (_) => historyProvider),
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // Ajoute ici un BookProvider si tu en crées un plus tard
       ],
-      child: const BookwiseApp(),
+      child: const BookWiseApp(),
     ),
   );
 }
 
-class BookwiseApp extends StatelessWidget {
-  const BookwiseApp({super.key});
+class BookWiseApp extends StatelessWidget {
+  const BookWiseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
-      title: 'Bookwise',
+      title: 'BookWise',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        fontFamily: 'Roboto',
-      ),
-      home: const WelcomeScreen(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeProvider.themeMode,
+      home: const WelcomeScreen(), // Assure-toi que c'est bien ton écran d'accueil
     );
   }
 }

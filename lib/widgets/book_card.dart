@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../models/book.dart';
 import '../providers/favorites_provider.dart';
-import '../providers/history_provider.dart';
 import '../screens/book_detail_screen.dart';
 
 class BookCard extends StatelessWidget {
@@ -31,14 +30,6 @@ class BookCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onTap: () {
-          /// Ajout : le clic augmente le score de recommandations
-          book.clicks++;
-
-          /// Ajout dans l’historique
-          final historyProvider =
-              Provider.of<HistoryProvider>(context, listen: false);
-          historyProvider.addToHistory(book);
-
           /// Aller au détail
           Navigator.push(
             context,
@@ -85,9 +76,10 @@ class BookCard extends StatelessWidget {
                     /// Titre
                     Text(
                       book.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -97,9 +89,9 @@ class BookCard extends StatelessWidget {
                     /// Auteur
                     Text(
                       book.author,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black54,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -107,9 +99,9 @@ class BookCard extends StatelessWidget {
                     /// Genre
                     Text(
                       book.genre,
-                      style: const TextStyle(
-                        color: Colors.deepPurple,
+                      style: TextStyle(
                         fontSize: 13,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],
@@ -136,9 +128,9 @@ class BookCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Text(
                       '${book.favorites} ❤',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

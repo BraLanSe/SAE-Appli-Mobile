@@ -6,6 +6,10 @@ class FavoritesProvider extends ChangeNotifier {
   List<Book> _favorites = [];
   final db = DatabaseService();
 
+  FavoritesProvider() {
+    loadFavorites();
+  }
+
   List<Book> get favorites => _favorites;
 
   /// Charger les favoris depuis SQLite
@@ -17,14 +21,14 @@ class FavoritesProvider extends ChangeNotifier {
   /// Ajouter un favori
   Future<void> addFavorite(Book book) async {
     // Augmenter le compteur favorites
-    book.favorites += 1;
-    await db.addFavorite(book);
+    book.favorites = 1;
+    await db.setFavorite(book.id, true);
     await loadFavorites();
   }
 
   /// Retirer un favori
   Future<void> removeFavorite(String id) async {
-    await db.removeFavorite(id);
+    await db.setFavorite(id, false);
     await loadFavorites();
   }
 
@@ -36,6 +40,11 @@ class FavoritesProvider extends ChangeNotifier {
     } else {
       await addFavorite(book);
     }
+  }
+
+  Future<void> clearFavorites() async {
+    await db.clearFavorites();
+    await loadFavorites();
   }
 
   /// Savoir si un livre est en favori

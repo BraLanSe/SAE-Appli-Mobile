@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/history_provider.dart';
 import '../providers/favorites_provider.dart';
+import '../theme/app_theme.dart';
 
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
@@ -12,6 +13,7 @@ class StatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final historyProvider = Provider.of<HistoryProvider>(context);
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final history = historyProvider.history;
     final favorites = favoritesProvider.favorites;
@@ -41,43 +43,60 @@ class StatsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Statistiques"),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            _statTile(
-              icon: Icons.timer,
-              title: "Temps total de lecture",
-              value: "${totalMinutes.toStringAsFixed(1)} min",
+      body: Container(
+        decoration: AppTheme.backgroundGradient(context),
+        child: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1B24) : Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
             ),
-            _statTile(
-              icon: Icons.schedule,
-              title: "Temps moyen par livre",
-              value: "${avgMinutes.toStringAsFixed(1)} min",
+            child: ListView(
+              children: [
+                _statTile(
+                  icon: Icons.timer,
+                  title: "Temps total de lecture",
+                  value: "${totalMinutes.toStringAsFixed(1)} min",
+                ),
+                _statTile(
+                  icon: Icons.schedule,
+                  title: "Temps moyen par livre",
+                  value: "${avgMinutes.toStringAsFixed(1)} min",
+                ),
+                _statTile(
+                  icon: Icons.category,
+                  title: "Genre préféré",
+                  value: favoriteGenre,
+                ),
+                _statTile(
+                  icon: Icons.favorite,
+                  title: "Nombre de favoris",
+                  value: favorites.length.toString(),
+                ),
+                _statTile(
+                  icon: Icons.history,
+                  title: "Livres consultés",
+                  value: history.length.toString(),
+                ),
+                _statTile(
+                  icon: Icons.memory,
+                  title: "Livres en mémoire",
+                  value: (history.length + favorites.length).toString(),
+                ),
+              ],
             ),
-            _statTile(
-              icon: Icons.category,
-              title: "Genre préféré",
-              value: favoriteGenre,
-            ),
-            _statTile(
-              icon: Icons.favorite,
-              title: "Nombre de favoris",
-              value: favorites.length.toString(),
-            ),
-            _statTile(
-              icon: Icons.history,
-              title: "Livres consultés",
-              value: history.length.toString(),
-            ),
-            _statTile(
-              icon: Icons.memory,
-              title: "Livres en mémoire",
-              value: (history.length + favorites.length).toString(),
-            ),
-          ],
+          ),
         ),
       ),
     );

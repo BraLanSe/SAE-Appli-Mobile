@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import '../models/book.dart';
-import '../utils/data.dart';
+import '../services/database_service.dart';
 import '../widgets/book_card.dart';
 import 'favorites_screen.dart';
 import 'history_screen.dart';
 import 'recommended_screen.dart';
 import 'stats_screen.dart';
+import '../theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +21,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final DatabaseService _db = DatabaseService();
+
+  List<Book> _books = [];
+  bool _loading = true;
 
   String _searchQuery = "";
   String? _selectedGenre = "All";
@@ -46,8 +53,23 @@ class _HomeScreenState extends State<HomeScreen> {
     "Date ajout",
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadBooks();
+  }
+
+  Future<void> _loadBooks() async {
+    final books = await _db.getAllBooks();
+    if (!mounted) return;
+    setState(() {
+      _books = books;
+      _loading = false;
+    });
+  }
+
   List<Book> get filteredBooks {
-    List<Book> books = [...allBooks];
+    List<Book> books = [..._books];
 
     // Filtrer par genre
     if (_selectedGenre != "All") {
@@ -87,11 +109,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Bookwise"),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.transparent,
         actions: [
+          IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDarkMode
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            tooltip: "Mode sombre",
+            onPressed: () => Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
+          ),
           IconButton(
             icon: const Icon(Icons.favorite),
             tooltip: "Favoris",
@@ -121,118 +153,140 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Barre de recherche
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Rechercher un livre ou un auteur...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() => _searchQuery = value);
-              },
-            ),
-            const SizedBox(height: 12),
-
-            // Bouton vers recommandations
-            ElevatedButton.icon(
-              icon: const Icon(Icons.star, color: Colors.white),
-              label: const Text(
-                "Voir recommandations",
-                style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RecommendationsScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-
-            // Filtres par genre
-            SizedBox(
-              height: 45,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: genres.map((genre) {
-                  final bool selected = _selectedGenre == genre;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(genre),
-                      selected: selected,
-                      selectedColor: Colors.deepPurple,
-                      labelStyle: TextStyle(
-                        color: selected ? Colors.white : Colors.black,
-                      ),
-                      onSelected: (_) {
-                        setState(() => _selectedGenre = genre);
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Tri
-            Row(
-              children: [
-                const Text(
-                  "Trier par : ",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(width: 10),
-                DropdownButton<String>(
-                  value: _selectedSort,
-                  items: sortOptions
-                      .map((sort) => DropdownMenuItem(
-                            value: sort,
-                            child: Text(sort),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedSort = value!);
-                  },
+      body: Container(
+        decoration: AppTheme.backgroundGradient(context),
+        child: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1B24) : Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Barre de recherche
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Rechercher un livre ou un auteur...",
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() => _searchQuery = value);
+                  },
+                ),
+                const SizedBox(height: 12),
 
-            // Liste des livres
-            Expanded(
-              child: filteredBooks.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "Aucun livre trouvé",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: filteredBooks.length,
-                      itemBuilder: (context, index) {
-                        final book = filteredBooks[index];
-                        return BookCard(
-                          book: book,
-                          heroTag: book.id,
-                        );
+                // Bouton vers recommandations
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.star, color: Colors.white),
+                  label: const Text(
+                    "Voir recommandations",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RecommendationsScreen()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // Filtres par genre
+                SizedBox(
+                  height: 45,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: genres.map((genre) {
+                      final bool selected = _selectedGenre == genre;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(genre),
+                          selected: selected,
+                          selectedColor: Colors.deepPurple,
+                          labelStyle: TextStyle(
+                            color: selected ? Colors.white : Colors.black,
+                          ),
+                          onSelected: (_) {
+                            setState(() => _selectedGenre = genre);
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Tri
+                Row(
+                  children: [
+                    const Text(
+                      "Trier par : ",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(width: 10),
+                    DropdownButton<String>(
+                      value: _selectedSort,
+                      items: sortOptions
+                          .map((sort) => DropdownMenuItem(
+                                value: sort,
+                                child: Text(sort),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => _selectedSort = value!);
                       },
                     ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Liste des livres
+                Expanded(
+                  child: _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : filteredBooks.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "Aucun livre trouvé",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _loadBooks,
+                              child: ListView.builder(
+                                itemCount: filteredBooks.length,
+                                itemBuilder: (context, index) {
+                                  final book = filteredBooks[index];
+                                  return BookCard(
+                                    book: book,
+                                    heroTag: book.id,
+                                  );
+                                },
+                              ),
+                            ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/book.dart';
 import '../providers/history_provider.dart';
+import '../theme/app_theme.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -48,6 +49,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final book = widget.book;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final imageHeight = (MediaQuery.of(context).size.height * 0.32).clamp(200.0, 320.0);
 
     return WillPopScope(
       onWillPop: () async {
@@ -58,52 +61,71 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(book.title),
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.transparent,
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: widget.heroTag,
-                child: Image.asset(
-                  book.imagePath,
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.contain,
+        body: Container(
+          decoration: AppTheme.backgroundGradient(context),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1B24) : Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: widget.heroTag,
+                      child: Image.asset(
+                        book.imagePath,
+                        width: double.infinity,
+                        height: imageHeight,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      book.title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      book.author,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      book.genre,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      book.description,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                book.title,
-                style: const TextStyle(
-                  fontSize: 24, 
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                book.author,
-                style: const TextStyle(
-                  fontSize: 18, 
-                  color: Colors.black54,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                book.genre,
-                style: const TextStyle(
-                  fontSize: 16, 
-                  color: Colors.deepPurple,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                book.description,
-                style: const TextStyle(fontSize: 16),
-              ),
-            ],
+            ),
           ),
         ),
       ),
