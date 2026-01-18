@@ -55,7 +55,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
     // Filtrer par genre
     if (genre != "All") {
       books = books
-          .where((b) => b.genre.toLowerCase() == genre.toLowerCase())
+          .where((b) => b.genre.toLowerCase().contains(genre.toLowerCase()))
           .toList();
     }
 

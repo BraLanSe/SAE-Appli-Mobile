@@ -67,7 +67,7 @@ class FavoritesScreen extends StatelessWidget {
                 final book = favoriteBooks[index];
                 return FadeInAnimation(
                     delay: index,
-                    child: BookCard(book: book, heroTag: book.id));
+                    child: BookCard(book: book, heroTag: 'fav_${book.id}'));
               },
             ),
     );

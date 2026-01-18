@@ -74,7 +74,7 @@ class HistoryScreen extends StatelessWidget {
                 final book = historyBooks[index];
                 return FadeInAnimation(
                   delay: index,
-                  child: BookCard(book: book, heroTag: book.id),
+                  child: BookCard(book: book, heroTag: 'hist_${book.id}'),
                 );
               },
             ),

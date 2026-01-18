@@ -6,6 +6,7 @@ import '../models/book.dart';
 import '../utils/data.dart';
 import '../widgets/book_card.dart';
 import '../widgets/shimmer_loading.dart';
+import 'reading_screen.dart'; // Added
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -220,8 +221,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Bonne lecture !")),
+                        // Navigate to Immersive Reading Screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ReadingScreen(book: widget.book),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.menu_book),

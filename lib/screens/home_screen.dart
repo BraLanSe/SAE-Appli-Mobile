@@ -12,6 +12,7 @@ import '../providers/filter_provider.dart';
 import '../services/recommendation_engine.dart'; // Added
 import '../models/recommendation_result.dart'; // Added
 import 'main_screen.dart';
+import 'profile_screen.dart'; // Added
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -61,9 +62,12 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              // Future: Profile or Notifications
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
             },
-            icon: const Icon(Icons.notifications_none_rounded),
+            icon: const Icon(Icons.person_rounded),
           ),
         ],
       ),
@@ -373,7 +377,10 @@ class HomeScreen extends StatelessWidget {
           onTap: () {
             final provider =
                 Provider.of<FilterProvider>(context, listen: false);
-            provider.setGenre(label == "Tous" ? "All" : label);
+            String value = label;
+            if (label == "Tous") value = "All";
+            if (label == "Sci-Fi") value = "Science-Fiction";
+            provider.setGenre(value);
             MainScreen.switchToTab(context, 1);
           },
           child: Container(
@@ -389,7 +396,7 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(
                 color: isActive
                     ? Colors.white
-                    : (isDarkMode ? Colors.white70 : Colors.grey[700]),
+                    : (isDarkMode ? Colors.white : Colors.grey[700]),
                 fontWeight: FontWeight.w600,
               ),
             ),
