@@ -82,6 +82,12 @@ class BookwiseApp extends StatelessWidget {
               headlineSmall: GoogleFonts.playfairDisplay(),
               titleLarge: GoogleFonts.playfairDisplay(),
             ),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
           ),
           darkTheme: ThemeData(
             primarySwatch: Colors.deepPurple,
@@ -156,6 +162,12 @@ class BookwiseApp extends StatelessWidget {
                   bodyColor: Colors.grey[300],
                   displayColor: Colors.white,
                 ),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
           ),
           home:
               seenOnboarding ? const WelcomeScreen() : const OnboardingScreen(),
