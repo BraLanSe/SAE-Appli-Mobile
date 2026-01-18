@@ -117,7 +117,7 @@ Toutes les données sont traitées localement.
 
 
 ## Structure du projet
-
+```
 lib/
 ├── models/        # Modèles de données (Book, etc.)
 ├── providers/     # Gestion de l’état (Provider)
@@ -126,7 +126,7 @@ lib/
 ├── utils/         # Fonctions utilitaires
 └── widgets/       # Widgets réutilisables
 
-
+```
 
 ## Technologies utilisées
 
