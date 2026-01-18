@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Container(
-        decoration: AppTheme.backgroundGradient(context),
+        color: AppTheme.primaryViolet,
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -45,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: titleSize,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: Theme.of(context).colorScheme.onBackground,
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -54,7 +54,7 @@ class WelcomeScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: subtitleSize,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
                             ),
                           ),
                           const SizedBox(height: 28),
