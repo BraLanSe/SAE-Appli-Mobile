@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'user_profile_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
 import '../utils/data.dart'; // Pour retrouver le livre entier par titre/id
 
 class HistoryProvider extends ChangeNotifier {
+  final UserProfileProvider userProfile;
   final List<Book> _history = [];
+
+  HistoryProvider(this.userProfile);
 
   List<Book> get history => List.unmodifiable(_history.reversed);
 
@@ -52,6 +56,10 @@ class HistoryProvider extends ChangeNotifier {
     _history.removeWhere((b) => b.title == book.title);
     _history.add(book);
     _saveHistory();
+
+    // Ajout d'XP pour la lecture
+    userProfile.addXp(20);
+
     notifyListeners();
   }
 

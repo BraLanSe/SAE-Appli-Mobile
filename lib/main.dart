@@ -6,6 +6,7 @@ import 'providers/favorites_provider.dart';
 import 'providers/history_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/filter_provider.dart'; // Added
+import 'providers/user_profile_provider.dart'; // Added
 import 'utils/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
@@ -18,8 +19,12 @@ void main() async {
   final favoritesProvider = FavoritesProvider();
   await favoritesProvider.loadFavorites(allBooks);
 
-  // Initialisation du provider d'historique
-  final historyProvider = HistoryProvider();
+  // Initialisation du provider de profil
+  final userProfileProvider = UserProfileProvider();
+  await userProfileProvider.loadProfile();
+
+  // Initialisation du provider d'historique (avec dépendance vers userProfile)
+  final historyProvider = HistoryProvider(userProfileProvider);
   await historyProvider.loadHistory();
 
   // Initialisation du thème
@@ -37,9 +42,11 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => favoritesProvider),
+        ChangeNotifierProvider(create: (_) => favoritesProvider),
         ChangeNotifierProvider(create: (_) => historyProvider),
         ChangeNotifierProvider(create: (_) => themeProvider),
         ChangeNotifierProvider(create: (_) => filterProvider),
+        ChangeNotifierProvider(create: (_) => userProfileProvider),
       ],
       child: BookwiseApp(seenOnboarding: seenOnboarding),
     ),
