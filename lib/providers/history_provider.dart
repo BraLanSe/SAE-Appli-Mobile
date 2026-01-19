@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'user_profile_provider.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
 import '../utils/data.dart'; // Pour retrouver le livre entier par titre/id
+import '../services/database_service.dart';
 
 class HistoryProvider extends ChangeNotifier {
   final UserProfileProvider userProfile;
@@ -11,21 +10,21 @@ class HistoryProvider extends ChangeNotifier {
 
   HistoryProvider(this.userProfile);
 
-  List<Book> get history => List.unmodifiable(_history.reversed);
+  List<Book> get history => List.unmodifiable(
+      _history); // Déjà trié par la requête SQL si on veut, ou on garde reversed ici si on push à la fin
 
   Future<void> loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> historyTitles = prefs.getStringList('history_books') ?? [];
+    final dbService = DatabaseService();
+    List<String> historyIds = await dbService
+        .getHistory(); // IDs triés par date décroissante (plus récent en premier)
 
-    // On reconstruit la liste en cherchant dans allBooks
-    // (Dans un vrai cas, on stockerait les ID ou un modèle complet JSON)
     _history.clear();
-    for (var title in historyTitles) {
+    for (var id in historyIds) {
       try {
-        final book = allBooks.firstWhere((b) => b.title == title,
+        final book = allBooks.firstWhere((b) => b.id == id,
             orElse: () => Book(
                   id: '0',
-                  title: title,
+                  title: 'Inconnu',
                   author: 'Inconnu',
                   genre: 'Inconnu',
                   imagePath: '',
@@ -37,25 +36,20 @@ class HistoryProvider extends ChangeNotifier {
           _history.add(book);
         }
       } catch (e) {
-        // Ignorer si livre non trouvé
+        // Ignorer
       }
     }
     notifyListeners();
   }
 
-  Future<void> _saveHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    // On sauvegarde simplement la liste des titres (dans l'ordre d'ajout)
-    // Note: _history est modifiée, donc on la sauvegarde telle quelle
-    List<String> titles = _history.map((b) => b.title).toList();
-    await prefs.setStringList('history_books', titles);
-  }
+  Future<void> addToHistory(Book book) async {
+    // Évite les doublons visuels immédiats, mais la DB gère aussi l'upsert
+    _history.removeWhere((b) => b.id == book.id);
+    _history.insert(
+        0, book); // Ajout au début car on a chargé par ordre décroissant
 
-  void addToHistory(Book book) {
-    // Évite les doublons : supprime si déjà présent
-    _history.removeWhere((b) => b.title == book.title);
-    _history.add(book);
-    _saveHistory();
+    final dbService = DatabaseService();
+    await dbService.addToHistory(book.id, book.title, book.genre);
 
     // Ajout d'XP pour la lecture
     userProfile.addXp(20);
@@ -63,9 +57,10 @@ class HistoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearHistory() {
+  Future<void> clearHistory() async {
     _history.clear();
-    _saveHistory();
+    final dbService = DatabaseService();
+    await dbService.clearHistory();
     notifyListeners();
   }
 }

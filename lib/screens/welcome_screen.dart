@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/fade_in_animation.dart';
 
@@ -87,9 +88,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: const [
-                  Color(0xFF673AB7), // Colors.deepPurple
-                  Color(0xFFE040FB), // Colors.purpleAccent
-                  Color(0xFF7E57C2), // Lighter deep purple
+                  Color(0xFF4A148C), // Deep Purple 900
+                  Color(0xFF7B1FA2), // Purple 700
+                  Color(0xFFAB47BC), // Purple 400
+                  Color(0xFF1A237E), // Indigo 900 (for depth)
                 ],
                 begin: _topAlignmentAnimation.value,
                 end: _bottomAlignmentAnimation.value,
@@ -99,112 +101,133 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           );
         },
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FadeInAnimation(
-                delay: 2,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/images/logobookwise.jpeg',
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FadeInAnimation(
+                  delay: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo_bookwise_new.jpg', // New Logo
+                        width: 140,
+                        height: 140,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              FadeInAnimation(
-                delay: 4,
-                child: Column(
-                  children: [
-                    const Text(
-                      'BookWise',
-                      style: TextStyle(
-                        fontSize: 48,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Playfair Display',
-                        shadows: [
-                          Shadow(
-                            color: Colors.black26,
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
-                          ),
-                        ],
+                const SizedBox(height: 40),
+                FadeInAnimation(
+                  delay: 4,
+                  child: Column(
+                    children: [
+                      Text(
+                        'BookWise',
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 56,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                          shadows: [
+                            const Shadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 4),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Votre boussole littéraire",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontStyle: FontStyle.italic,
-                        letterSpacing: 1.2,
-                        shadows: const [
-                          Shadow(
-                            color: Colors.black26,
-                            offset: Offset(0, 1),
-                            blurRadius: 2,
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                        child: Text(
+                          "Révélez votre prochain coup de cœur",
+                          style: GoogleFonts.lato(
+                            fontSize: 16,
+                            color: Colors.white.withValues(alpha: 0.95),
+                            fontStyle: FontStyle.italic,
+                            letterSpacing: 1.1,
                           ),
-                        ],
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const FadeInAnimation(
-                delay: 6,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32.0),
+                const SizedBox(height: 30),
+                FadeInAnimation(
+                  delay: 6,
                   child: Text(
-                    'Découvrez vos livres préférés selon vos goûts',
+                    'L’excellence littéraire à portée de main.\nDécouvrez, gérez et partagez vos lectures.',
                     style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white70,
-                      height: 1.5,
+                      fontSize: 16,
+                      color: Colors.white.withValues(alpha: 0.8),
+                      height: 1.6,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              const SizedBox(height: 50),
-              FadeInAnimation(
-                delay: 8,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const MainScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.deepPurple,
-                    elevation: 8,
-                    shadowColor: Colors.black45,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 48, vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                const SizedBox(height: 60),
+                FadeInAnimation(
+                  delay: 8,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MainScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF4A148C),
+                      elevation: 10,
+                      shadowColor: Colors.black.withValues(alpha: 0.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Commencer',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text(
+                          'COMMENCER',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward_rounded, size: 20),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

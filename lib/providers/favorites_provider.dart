@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
+import '../services/database_service.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   List<Book> _favorites = [];
 
   List<Book> get favorites => _favorites;
 
-  /// Charger les favoris depuis SharedPreferences
+  /// Charger les favoris depuis SQLite
   Future<void> loadFavorites(List<Book> allBooks) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> savedTitles = prefs.getStringList('favorites') ?? [];
+    final dbService = DatabaseService();
+    List<String> validIds = await dbService.getFavorites();
 
-    _favorites = allBooks.where((book) => savedTitles.contains(book.title)).toList();
+    // On filtre les livres dont l'ID est dans la base
+    _favorites = allBooks.where((book) => validIds.contains(book.id)).toList();
 
     // Mettre à jour le compteur favorites
     for (var book in allBooks) {
-      book.favorites = savedTitles.contains(book.title) ? 1 : 0;
+      book.favorites = validIds.contains(book.id) ? 1 : 0;
     }
 
     notifyListeners();
@@ -24,19 +25,17 @@ class FavoritesProvider extends ChangeNotifier {
 
   /// Ajouter ou retirer un favori
   Future<void> toggleFavorite(Book book) async {
-    final prefs = await SharedPreferences.getInstance();
+    final dbService = DatabaseService();
 
     if (_favorites.contains(book)) {
       _favorites.remove(book);
-      book.favorites = (book.favorites - 1).clamp(0, 999999); // éviter négatifs
+      book.favorites = (book.favorites - 1).clamp(0, 999999);
+      await dbService.removeFavorite(book.id);
     } else {
       _favorites.add(book);
       book.favorites += 1;
+      await dbService.addFavorite(book.id, book.title, book.genre);
     }
-
-    // Sauvegarde des favoris par titre
-    List<String> titles = _favorites.map((b) => b.title).toList();
-    await prefs.setStringList('favorites', titles);
 
     notifyListeners();
   }

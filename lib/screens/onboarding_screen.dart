@@ -21,7 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "title": "Explorez",
       "text":
           "Découvrez une vaste collection de livres adaptés à tous les goûts. Trouvez votre prochaine lecture en un clin d'œil.",
-      "icon": "assets/images/logobookwise.jpeg"
+      "icon": "assets/images/logo_bookwise_new.jpg"
     },
     {
       "title": "Suivez",
@@ -186,11 +186,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: theme.colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              iconData,
-              size: 100,
-              color: theme.colorScheme.primary,
-            ),
+            child: data["icon"]!.isNotEmpty &&
+                    data["icon"]!.contains("assets/images/")
+                ? ClipOval(
+                    child: Image.asset(
+                      data["icon"]!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Icon(
+                    iconData,
+                    size: 100,
+                    color: theme.colorScheme.primary,
+                  ),
           ),
           const SizedBox(height: 48),
           Text(
