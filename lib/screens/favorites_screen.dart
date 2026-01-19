@@ -48,7 +48,7 @@ class FavoritesScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        decoration: AppTheme.backgroundGradient(context),
+        color: AppTheme.primaryViolet,
         child: SafeArea(
           child: Container(
             margin: const EdgeInsets.all(12),

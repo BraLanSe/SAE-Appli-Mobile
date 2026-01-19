@@ -1,141 +1,74 @@
+// lib/widgets/book_card.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../models/book.dart';
-import '../providers/favorites_provider.dart';
 import '../screens/book_detail_screen.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
   final String heroTag;
 
-  const BookCard({
-    super.key,
-    required this.book,
-    required this.heroTag,
-  });
+  const BookCard({super.key, required this.book, required this.heroTag});
 
   @override
   Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    // ✅ Changement ici : on passe l'ID au lieu de l'objet
-    final bool isFavorite = favoritesProvider.isFavorite(book.id);
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(15),
-        onTap: () {
-          /// Aller au détail
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BookDetailScreen(
-                book: book,
-                heroTag: heroTag,
-              ),
+    return GestureDetector(
+      onTap: () {
+        // Navigation vers le détail (à conserver)
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BookDetailScreen(book: book, heroTag: heroTag)),
+        );
+      },
+      child: Container(
+        // Design "Carte Flottante" de la vidéo
+        decoration: BoxDecoration(
+          color: Colors.white, 
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          );
-        },
-        child: Row(
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            /// ---- IMAGE ----
-            Hero(
-              tag: heroTag,
+            // Image qui prend 80% de la place
+            Expanded(
+              flex: 4,
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  bottomLeft: Radius.circular(15),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.asset(
                   book.imagePath,
-                  width: 80,
-                  height: 120,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 80,
-                    height: 120,
+                  // Gestion d'erreur si l'image manque
+                  errorBuilder: (c, o, s) => Container(
                     color: Colors.grey[300],
-                    child: const Icon(Icons.book, size: 40, color: Colors.white),
+                    child: const Icon(Icons.book, size: 50, color: Colors.grey),
                   ),
                 ),
               ),
             ),
-
-            /// ---- TEXTE ----
+            // Titre minimaliste en bas
             Expanded(
+              flex: 1,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// Titre
-                    Text(
-                      book.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Center(
+                  child: Text(
+                    book.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 4),
-
-                    /// Auteur
-                    Text(
-                      book.author,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    /// Genre
-                    Text(
-                      book.genre,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-
-            /// ---- FAVORIS ----
-            Column(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : Colors.grey,
-                  ),
-                  onPressed: () {
-                    favoritesProvider.toggleFavorite(book);
-                  },
-                ),
-
-                /// Affichage du compteur "favorites"
-                if (book.favorites > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      '${book.favorites} ❤',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
             ),
           ],
         ),

@@ -54,7 +54,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppTheme.backgroundGradient(context),
+        color: AppTheme.primaryViolet,
         child: SafeArea(
           child: Container(
             margin: const EdgeInsets.all(12),
@@ -88,7 +88,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: BookCard(
                               book: book,
-                              heroTag: "${book.id}_reco",
+                              heroTag: 'recommended_${book.id}',
                             ),
                           );
                         },
