@@ -11,7 +11,6 @@ import 'providers/to_read_provider.dart'; // Added
 import 'utils/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
-import 'screens/onboarding_screen.dart'; // Added
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,7 +71,9 @@ class BookwiseApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            primarySwatch: Colors.deepPurple,
+            primarySwatch: Colors.indigo, // Changed to Indigo
+            scaffoldBackgroundColor:
+                const Color(0xFFF8FAFC), // Off-white (Slate 50)
             brightness: Brightness.light,
             fontFamily: GoogleFonts.roboto().fontFamily,
             textTheme: GoogleFonts.robotoTextTheme().copyWith(
@@ -92,26 +93,26 @@ class BookwiseApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            primarySwatch: Colors.deepPurple,
+            primarySwatch: Colors.indigo,
             brightness: Brightness.dark,
             fontFamily: GoogleFonts.roboto().fontFamily,
             scaffoldBackgroundColor:
-                const Color(0xFF0F111A), // Deep Midnight Blue
-            canvasColor: const Color(0xFF1E2230), // For bottom sheets etc
-            cardColor: const Color(0xFF1E2230), // Lighter blue-grey for cards
+                const Color(0xFF0F172A), // Slate 900 (Darker Indigo-ish)
+            canvasColor: const Color(0xFF1E293B), // Slate 800
+            cardColor: const Color(0xFF1E293B), // Slate 800
 
             // Define a refined ColorScheme
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF8B5CF6), // Vivid Violet
-              secondary: Color(0xFF03DAC6), // Teal accent
-              surface: Color(0xFF1E2230),
-              onSurface: Color(0xFFE2E8F0), // Off-white text
-              error: Color(0xFFCF6679),
+              primary: Color(0xFF6366F1), // Indigo 500
+              secondary: Color(0xFF14B8A6), // Teal 500 (Accent)
+              surface: Color(0xFF1E293B),
+              onSurface: Color(0xFFF1F5F9), // Slate 100
+              error: Color(0xFFEF4444),
             ),
 
             // AppBar Theme
             appBarTheme: AppBarTheme(
-              backgroundColor: const Color(0xFF0F111A).withValues(alpha: 0.8),
+              backgroundColor: const Color(0xFF0F172A).withOpacity(0.8),
               elevation: 0,
               iconTheme: const IconThemeData(color: Colors.white),
               titleTextStyle: GoogleFonts.playfairDisplay(
@@ -171,8 +172,7 @@ class BookwiseApp extends StatelessWidget {
               },
             ),
           ),
-          home:
-              seenOnboarding ? const WelcomeScreen() : const OnboardingScreen(),
+          home: const WelcomeScreen(),
         );
       },
     );

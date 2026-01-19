@@ -6,6 +6,7 @@ import '../providers/history_provider.dart';
 import '../providers/to_read_provider.dart'; // Added
 import '../screens/book_detail_screen.dart';
 import '../services/statistics_service.dart'; // Added
+import 'statistics_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -249,6 +250,29 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Detail Statistics Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const StatisticsScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.bar_chart),
+                      label: const Text("Voir les statistiques détaillées"),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -528,12 +552,12 @@ class ProfileScreen extends StatelessWidget {
       case 'bookworm':
         icon = Icons.menu_book;
         label = "Rat de biblio";
-        color = Colors.amber;
+        color = Colors.cyan; // Changed from Amber
         break;
       default:
         icon = Icons.star;
         label = "Badge";
-        color = Colors.blue;
+        color = Colors.indigoAccent; // Changed from Blue
     }
 
     return Container(

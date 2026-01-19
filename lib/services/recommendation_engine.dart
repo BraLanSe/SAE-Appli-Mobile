@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart'; // Added for debugPrint
 import '../models/book.dart';
 import '../models/recommendation_result.dart';
 import 'database_service.dart';
@@ -13,70 +14,134 @@ class RecommendationEngine {
   }) async {
     final monitor = PerformanceMonitor();
 
-    // Log battery at start of heavy process
+    // 1. Initialisation & Battery Check
     await monitor.logBatteryStats();
+    final int batteryLevel = await monitor.getBatteryLevel();
+    final bool isEcoMode = batteryLevel < 20;
+
+    debugPrint(
+        "[BATTERY_MODE] ${isEcoMode ? "Eco (Level: $batteryLevel%)" : "Full (Level: $batteryLevel%)"}");
 
     return await monitor.measureAsync<List<RecommendationResult>>(
-      "Recommendation Algorithm",
+      "Recommendation Algorithm (${isEcoMode ? 'Simple' : 'Jaccard'})",
       () async {
-        // 1. Fetch User Preferences from SQLite
         final dbService = DatabaseService();
-        final preferredGenres = await dbService.getPreferredGenres();
 
-        // Simulating a "heavy" process for demonstration of monitoring if needed
-        // await Future.delayed(const Duration(milliseconds: 20));
+        // 2. Fetch User Context
+        // Pour Jaccard, on a besoin des livres complets (historique + favoris)
+        // Le DatabaseService retourne les IDs sous forme de List<String>
+        final favoriteIds = await dbService.getFavorites();
+        final historyIds = await dbService.getHistory();
 
-        // 2. Filter & Score
-        // Strategy: "Trouve les 3 genres les plus fréquents... et sors 5 livres aléatoires"
+        // On combine pour avoir le "Profil Utilisateur" (les 5 derniers)
+        final uniqueUserBookIds = {...favoriteIds, ...historyIds}.toList();
+
+        // Map IDs to Book objects
+        final userBooks = allBooks
+            .where((b) => uniqueUserBookIds.contains(b.id))
+            .take(5) // On garde les 5 plus récents/pertinents
+            .toList();
 
         List<RecommendationResult> results = [];
-        final random = Random();
 
-        if (preferredGenres.isNotEmpty) {
-          // Filter books that match preferred genres
-          final candidateBooks =
-              allBooks.where((b) => preferredGenres.contains(b.genre)).toList();
+        // 3. Branching Logic
+        if (isEcoMode) {
+          // --- MODE ÉCO : Algorithme Simple (Top Genres) ---
+          final preferredGenres = await dbService.getPreferredGenres();
+          final random = Random();
 
-          // Shuffle to get "random" books from these genres
-          candidateBooks.shuffle(random);
+          // Analyse limitée à 50 livres max pour économiser le CPU
+          final analysisScope = allBooks.take(50).toList();
 
-          // Take top N
-          for (var book in candidateBooks.take(limit)) {
-            // Score calculation (simplified for this task constraints)
-            // 5 base points + random jitter
-            double score = 5.0 + random.nextDouble();
+          if (preferredGenres.isNotEmpty) {
+            final candidateBooks = analysisScope
+                .where((b) =>
+                    preferredGenres.contains(b.genre) &&
+                    !uniqueUserBookIds.contains(b.id))
+                .toList();
 
-            // Calculate specific reason
-            String reason = "Genre favori : ${book.genre}";
+            candidateBooks.shuffle(random);
 
-            results.add(RecommendationResult(
-              book: book,
-              score: score,
-              matchPercentage:
-                  (85 + random.nextInt(14)), // Random 85-99% for "good" matches
-              reason: reason,
-            ));
+            for (var book in candidateBooks.take(limit)) {
+              results.add(RecommendationResult(
+                book: book,
+                score: 5.0, // Score statique
+                matchPercentage: 80 + random.nextInt(10),
+                reason: "Mode Éco : Genre ${book.genre}",
+              ));
+            }
+          }
+        } else {
+          // --- MODE FULL : Algorithme Jaccard (Vectoriel) ---
+
+          if (userBooks.isEmpty) {
+            // Fallback Cold Start si aucun historique même en mode Full
+            // On utilise la popularité sur tout le catalogue
+          } else {
+            // Pour chaque livre du catalogue (qui n'est pas déjà lu/aimé)
+            for (var candidate in allBooks) {
+              if (uniqueUserBookIds.contains(candidate.id)) continue;
+
+              double totalSim = 0;
+              for (var refBook in userBooks) {
+                totalSim += _calculateJaccardIndex(candidate, refBook);
+              }
+              double avgSim = totalSim / userBooks.length;
+
+              // On ne garde que ceux qui ont une similarité minimale (ex: > 0.1)
+              if (avgSim > 0.1) {
+                results.add(RecommendationResult(
+                  book: candidate,
+                  score: avgSim * 10, // Scale to roughly 0-10
+                  matchPercentage: (avgSim * 100).round().clamp(0, 100),
+                  reason:
+                      "Similaire à '${userBooks.first.title}'...", // Simplification de la raison
+                ));
+              }
+            }
+
+            // Dédoublonnage et Tri par score décroissant
+            results.sort((a, b) => b.score.compareTo(a.score));
+            results = results.take(limit).toList();
+
+            // Raffinage de la "Raison" (Prendre le livre de ref le plus proche)
+            for (var result in results) {
+              // Retrouver le livre de ref le plus proche
+              Book? bestRef;
+              double bestSim = -1;
+              for (var ref in userBooks) {
+                double sim = _calculateJaccardIndex(result.book, ref);
+                if (sim > bestSim) {
+                  bestSim = sim;
+                  bestRef = ref;
+                }
+              }
+              if (bestRef != null) {
+                result.reason =
+                    "Similaire à ${bestRef.title} (${(bestSim * 100).round()}%)";
+              }
+            }
           }
         }
 
-        // 3. Fallback / Discovery
-        // If we don't have enough books (or no preferred genres yet), fill with popular/random books
+        // 4. Fill with Popular (Fallback commun)
         if (results.length < limit) {
           final existingIds = results.map((r) => r.book.id).toSet();
+          existingIds
+              .addAll(uniqueUserBookIds); // Ne pas recommander ce qu'on a déjà
 
-          // Get popular books not already selected
           final fallbackBooks = allBooks
               .where((b) => !existingIds.contains(b.id))
               .toList()
-            ..sort((a, b) => (b.popularity ?? 0)
-                .compareTo(a.popularity ?? 0)); // Sort by popularity
+            ..sort((a, b) => (b.popularity ?? 0).compareTo(a.popularity ?? 0));
 
           for (var book in fallbackBooks.take(limit - results.length)) {
             results.add(RecommendationResult(
               book: book,
-              score: 1.0,
-              matchPercentage: 50 + random.nextInt(20),
-              reason: "Tendance actuelle",
+              score: isEcoMode ? 1.0 : 0.5,
+              matchPercentage: isEcoMode ? 60 : 40,
+              reason:
+                  isEcoMode ? "Mode Éco : Populaire" : "Découverte (Populaire)",
             ));
           }
         }
@@ -84,5 +149,41 @@ class RecommendationEngine {
         return results;
       },
     );
+  }
+
+  /// Calcule l'indice de Jaccard entre deux livres.
+  /// Considère (Titre Mots-clés + Genre + Auteur) comme un ensemble (Bag of Words).
+  static double _calculateJaccardIndex(Book a, Book b) {
+    Set<String> _getTags(Book book) {
+      final tags = <String>{};
+
+      // 1. Genre (Fort poids, on pourrait le mettre en MAJUSCULE pour unicité)
+      tags.add("GENRE:${book.genre.toUpperCase()}");
+
+      // 2. Auteur
+      tags.add("AUTHOR:${book.author.toUpperCase()}");
+
+      // 3. Mots du titre (Tokens > 3 lettres)
+      final titleWords = book.title
+          .toLowerCase()
+          .split(RegExp(r'\s+'))
+          .where((w) => w.length > 3)
+          .map((w) => "WORD:$w");
+      tags.addAll(titleWords);
+
+      // (Optionnel) Ajout de description keywords si on voulait faire du "Deep Content Based"
+
+      return tags;
+    }
+
+    final setA = _getTags(a);
+    final setB = _getTags(b);
+
+    final intersection = setA.intersection(setB).length;
+    final union = setA.union(setB).length;
+
+    if (union == 0) return 0.0;
+
+    return intersection / union;
   }
 }

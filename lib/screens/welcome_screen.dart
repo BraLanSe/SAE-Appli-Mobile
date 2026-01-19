@@ -3,6 +3,8 @@ import 'main_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/fade_in_animation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'onboarding_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -179,10 +181,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 FadeInAnimation(
                   delay: 6,
                   child: Text(
-                    'L’excellence littéraire à portée de main.\nDécouvrez, gérez et partagez vos lectures.',
+                    'Prêt pour votre prochaine lecture ?\nVotre bibliothèque intelligente, accessible partout, même hors connexion.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Colors.white.withOpacity(0.9),
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
@@ -192,17 +194,35 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 FadeInAnimation(
                   delay: 8,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MainScreen()),
-                      );
+                    onPressed: () async {
+                      // Logic to determine next screen
+                      final prefs = await SharedPreferences.getInstance();
+                      final seenOnboarding =
+                          prefs.getBool('seen_onboarding') ?? false;
+
+                      if (!mounted) return;
+
+                      if (seenOnboarding) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MainScreen()),
+                        );
+                      } else {
+                        // Go to Onboarding if not seen
+                        // We need to import OnboardingScreen first (will add import)
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const OnboardingScreen()), // Will resolve import soon
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF4A148C),
                       elevation: 10,
-                      shadowColor: Colors.black.withValues(alpha: 0.5),
+                      shadowColor: Colors.black.withOpacity(0.5),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 48, vertical: 20),
                       shape: RoundedRectangleBorder(
@@ -213,7 +233,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: const [
                         Text(
-                          'COMMENCER',
+                          "LANCER L'EXPÉRIENCE",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,

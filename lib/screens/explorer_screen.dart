@@ -28,6 +28,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
 
   final List<String> genres = [
     "All",
+    "Roman", // Added
     "Fiction",
     "Science-Fiction",
     "Fantasy",
