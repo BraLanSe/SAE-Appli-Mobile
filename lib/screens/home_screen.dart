@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
     final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
 
     // Stats
-    final historyCount = historyProvider.history.length;
+    // final historyCount = historyProvider.history.length; // Unused
 
     final theme = Theme.of(context);
     // final isDarkMode = theme.brightness == Brightness.dark; // Unused here now
@@ -115,7 +115,8 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.3),
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
