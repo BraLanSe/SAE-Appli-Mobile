@@ -12,6 +12,7 @@ import '../services/recommendation_engine.dart';
 import '../models/recommendation_result.dart';
 import 'main_screen.dart';
 import 'profile_screen.dart';
+import 'statistics_screen.dart';
 
 // Import new widgets
 import '../widgets/home/featured_book_banner.dart';
@@ -98,29 +99,38 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.menu_book_rounded,
-                            color: theme.colorScheme.primary, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          "$historyCount Lus",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const StatisticsScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.bar_chart_rounded,
+                              color: theme.colorScheme.primary, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Stats",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],

@@ -55,9 +55,19 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
 
     // Filtrer par genre
     if (genre != "All") {
-      books = books
-          .where((b) => b.genre.toLowerCase().contains(genre.toLowerCase()))
-          .toList();
+      if (genre == "Roman") {
+        // Logique métier : Roman inclut Fiction et Littérature
+        books = books.where((b) {
+          final g = b.genre.toLowerCase();
+          return g.contains("roman") ||
+              g.contains("fiction") ||
+              g.contains("littérature");
+        }).toList();
+      } else {
+        books = books
+            .where((b) => b.genre.toLowerCase().contains(genre.toLowerCase()))
+            .toList();
+      }
     }
 
     // Filtrer par recherche
