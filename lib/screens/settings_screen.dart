@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/history_provider.dart';
 import 'onboarding_screen.dart';
+import 'developer_mode_screen.dart'; // Added
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -78,6 +79,20 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) => const OnboardingScreen(isFromSettings: true),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.developer_mode, color: Colors.orange),
+            title: const Text("Performances & Métriques"),
+            subtitle: const Text("Mode Développeur (SAE Optimisation)"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DeveloperModeScreen(),
                 ),
               );
             },

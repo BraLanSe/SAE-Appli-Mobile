@@ -7,6 +7,7 @@ import 'providers/history_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/filter_provider.dart'; // Added
 import 'providers/user_profile_provider.dart'; // Added
+import 'providers/to_read_provider.dart'; // Added
 import 'utils/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
@@ -46,6 +47,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => themeProvider),
         ChangeNotifierProvider(create: (_) => filterProvider),
         ChangeNotifierProvider(create: (_) => userProfileProvider),
+        ChangeNotifierProvider(
+            create: (_) => ToReadProvider()..loadToReadList(allBooks)),
       ],
       child: BookwiseApp(seenOnboarding: seenOnboarding),
     ),

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../providers/history_provider.dart';
+import '../providers/to_read_provider.dart'; // Added
+import '../screens/book_detail_screen.dart'; // Added
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -224,6 +226,85 @@ class ProfileScreen extends StatelessWidget {
                         return _buildBadgeCard(context, badgeId);
                       },
                     ),
+
+                  const SizedBox(height: 40),
+
+                  // To Read Section
+                  Consumer<ToReadProvider>(
+                    builder: (context, toReadProvider, _) {
+                      final toReadList = toReadProvider.toReadList;
+                      if (toReadList.isEmpty) return const SizedBox.shrink();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "À lire plus tard",
+                            style: GoogleFonts.playfairDisplay(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 200,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: toReadList.length,
+                              itemBuilder: (context, index) {
+                                final book = toReadList[index];
+                                return Container(
+                                  width: 120,
+                                  margin: const EdgeInsets.only(
+                                      right: 12, bottom: 12),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BookDetailScreen(
+                                              book: book,
+                                              heroTag:
+                                                  'profile_toread_${book.id}'),
+                                        ),
+                                      );
+                                    },
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            child: Image.asset(
+                                              book.imagePath,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          book.title,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
