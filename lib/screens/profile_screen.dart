@@ -30,135 +30,253 @@ class ProfileScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Avatar
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: theme.colorScheme.primary,
-                child: Text(
-                  "M", // Initiale (fictive pour l'instant)
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+        child: Column(
+          children: [
+            // Graphic Header
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    theme.colorScheme.secondary,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                "Lecteur Passionné",
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  "Niveau $level",
-                  style: TextStyle(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // Level Progress
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
+                  // Avatar
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    child: CircleAvatar(
+                      radius: 46,
+                      backgroundColor:
+                          theme.colorScheme.primary.withValues(alpha: 0.1),
+                      child: Text(
+                        userProfile.userName.isNotEmpty
+                            ? userProfile.userName[0].toUpperCase()
+                            : "U",
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Name and Edit
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("XP: $xp / ${userProfile.nextLevelXp}"),
-                      Text("${(progress * 100).toInt()}%"),
+                      Text(
+                        userProfile.userName,
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _showEditNameDialog(context, userProfile);
+                        },
+                        icon: const Icon(Icons.edit, color: Colors.white70),
+                        tooltip: "Modifier le nom",
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 10,
-                      backgroundColor: theme.colorScheme.surface,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          theme.colorScheme.secondary),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              // Stats Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildStatItem(context, "$booksRead", "Livres lus"),
-                  _buildStatItem(context, "${badges.length}", "Badges"),
-                  // Fake stat for now
-                  _buildStatItem(context, "12h", "Temps lecture"),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              // Badges Section
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Mes Badges",
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (badges.isEmpty)
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
                     child: Text(
-                      "Lisez des livres pour débloquer des badges !",
-                      style: TextStyle(color: Colors.grey),
+                      "Niveau $level",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                )
-              else
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Level Progress
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Progression XP",
+                              style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            "$xp / ${userProfile.nextLevelXp} XP",
+                            style: TextStyle(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 12,
+                          backgroundColor: theme.colorScheme.surface,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.secondary),
+                        ),
+                      ),
+                    ],
                   ),
-                  itemCount: badges.length,
-                  itemBuilder: (context, index) {
-                    final badgeId = badges[index];
-                    return _buildBadgeCard(context, badgeId);
-                  },
-                ),
-            ],
-          ),
+
+                  const SizedBox(height: 40),
+
+                  // Stats Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem(context, "$booksRead", "Livres lus"),
+                      _buildStatItem(context, "${badges.length}", "Badges"),
+                      // Smart Stat: Favorite Genre
+                      _buildStatItem(context,
+                          _getFavoriteGenre(historyProvider), "Genre Favori"),
+                    ],
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Badges Section
+                  Text(
+                    "Mes Badges",
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (badges.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: Colors.grey.withValues(alpha: 0.1)),
+                      ),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Icon(Icons.emoji_events_outlined,
+                                size: 40, color: Colors.grey[400]),
+                            const SizedBox(height: 8),
+                            const Text(
+                              "Lisez des livres pour débloquer des badges !",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: badges.length,
+                      itemBuilder: (context, index) {
+                        final badgeId = badges[index];
+                        return _buildBadgeCard(context, badgeId);
+                      },
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 50),
+          ],
         ),
+      ),
+    );
+  }
+
+  String _getFavoriteGenre(HistoryProvider history) {
+    if (history.history.isEmpty) return "-";
+    // Count genres
+    final Map<String, int> genreCounts = {};
+    for (var book in history.history) {
+      genreCounts[book.genre] = (genreCounts[book.genre] ?? 0) + 1;
+    }
+    // Find max
+    var sorted = genreCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return sorted.first.key;
+  }
+
+  void _showEditNameDialog(BuildContext context, UserProfileProvider provider) {
+    final TextEditingController controller =
+        TextEditingController(text: provider.userName);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Modifier le nom"),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: "Entrez votre nom",
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Annuler"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                provider.setUserName(controller.text.trim());
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text("Enregistrer"),
+          ),
+        ],
       ),
     );
   }

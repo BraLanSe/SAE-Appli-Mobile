@@ -42,7 +42,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => favoritesProvider),
-        ChangeNotifierProvider(create: (_) => favoritesProvider),
         ChangeNotifierProvider(create: (_) => historyProvider),
         ChangeNotifierProvider(create: (_) => themeProvider),
         ChangeNotifierProvider(create: (_) => filterProvider),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Added
+
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/history_provider.dart';
+import 'onboarding_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -69,19 +70,16 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.restart_alt, color: Colors.blue),
-            title: const Text("Réinitialiser l'intro"),
-            subtitle: const Text("Revoir l'écran de bienvenue au démarrage"),
-            onTap: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('seen_onboarding', false);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content:
-                          Text("Intro réactivée pour le prochain lancement")),
-                );
-              }
+            leading: const Icon(Icons.school_rounded, color: Colors.blue),
+            title: const Text("Revoir le tutoriel"),
+            subtitle: const Text("Relancer l'écran de bienvenue"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const OnboardingScreen(isFromSettings: true),
+                ),
+              );
             },
           ),
         ],

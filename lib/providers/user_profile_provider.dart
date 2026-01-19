@@ -10,6 +10,9 @@ class UserProfileProvider extends ChangeNotifier {
 
   // Level Logic: Level 1 = 0-99, Level 2 = 100-299...
   // Simple formula: Level = (XP / 100).floor() + 1
+  String _userName = "Lecteur";
+  String get userName => _userName;
+
   int get level => (_xp / 100).floor() + 1;
 
   // XP require for next level
@@ -25,7 +28,15 @@ class UserProfileProvider extends ChangeNotifier {
   Future<void> loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
     _xp = prefs.getInt('user_xp') ?? 0;
+    _userName = prefs.getString('user_name') ?? "Lecteur";
     _badges = prefs.getStringList('user_badges') ?? [];
+    notifyListeners();
+  }
+
+  Future<void> setUserName(String name) async {
+    _userName = name;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', _userName);
     notifyListeners();
   }
 
@@ -64,6 +75,7 @@ class UserProfileProvider extends ChangeNotifier {
     _badges = [];
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_xp');
+    await prefs.remove('user_name');
     await prefs.remove('user_badges');
     notifyListeners();
   }
