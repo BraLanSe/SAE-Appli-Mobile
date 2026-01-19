@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Bookwise",
+          "BookWise",
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
@@ -109,24 +109,28 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                          horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.3)),
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.bar_chart_rounded,
-                              color: theme.colorScheme.primary, size: 20),
+                          const Icon(Icons.bar_chart_rounded,
+                              color: Colors.white, size: 20),
                           const SizedBox(width: 8),
-                          Text(
+                          const Text(
                             "Stats",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
+                              color: Colors.white,
                             ),
                           ),
                         ],
