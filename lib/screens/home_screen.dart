@@ -222,11 +222,22 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildCategoryChip(context, "Tous", true),
-                  _buildCategoryChip(context, "Roman", false),
-                  _buildCategoryChip(context, "Fantasy", false),
-                  _buildCategoryChip(context, "Thriller", false),
-                  _buildCategoryChip(context, "Sci-Fi", false),
+                  ...["Tous", "Roman", "Fantasy", "Thriller", "Sci-Fi"]
+                      .map((genre) {
+                    final filterProvider = Provider.of<FilterProvider>(context);
+                    bool isActive = false;
+                    if (genre == "Tous" &&
+                        filterProvider.selectedGenre == "All") {
+                      isActive = true;
+                    } else if (genre == "Sci-Fi" &&
+                        filterProvider.selectedGenre == "Science-Fiction") {
+                      isActive = true;
+                    } else if (genre == filterProvider.selectedGenre) {
+                      isActive = true;
+                    }
+
+                    return _buildCategoryChip(context, genre, isActive);
+                  }),
                 ],
               ),
             ),
@@ -466,6 +477,9 @@ class HomeScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary,
                           borderRadius: BorderRadius.circular(12),
+                          border: isDarkMode
+                              ? Border.all(color: Colors.white24, width: 1.5)
+                              : null,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.2),

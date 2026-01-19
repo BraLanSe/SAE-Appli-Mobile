@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'welcome_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  final bool isFromSettings;
+
+  const OnboardingScreen({super.key, this.isFromSettings = false});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -20,8 +22,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "text":
           "Découvrez une vaste collection de livres adaptés à tous les goûts. Trouvez votre prochaine lecture en un clin d'œil.",
       "icon": "assets/images/logobookwise.jpeg"
-      // Using existing asset as placeholder or I can use an IconData if prefered.
-      // Let's use Icons for "Premium" consistency if images aren't specifically made for onboarding.
     },
     {
       "title": "Suivez",
@@ -42,10 +42,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await prefs.setBool('seen_onboarding', true);
 
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-      );
+      if (widget.isFromSettings) {
+        Navigator.pop(context);
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        );
+      }
     }
   }
 
