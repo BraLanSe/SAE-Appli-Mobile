@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../providers/history_provider.dart';
 import '../providers/to_read_provider.dart'; // Added
-import '../screens/book_detail_screen.dart'; // Added
+import '../screens/book_detail_screen.dart';
+import '../services/statistics_service.dart'; // Added
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -16,11 +17,21 @@ class ProfileScreen extends StatelessWidget {
     final historyProvider = Provider.of<HistoryProvider>(context);
 
     // Calc stats
-    final booksRead = historyProvider.history.length;
+    // Calc stats
+    final history = historyProvider.history;
+    final booksRead = history.length;
     final level = userProfile.level;
     final xp = userProfile.xp;
     final progress = userProfile.levelProgress;
     final badges = userProfile.badges;
+
+    // New Advanced Stats
+    final totalPages = StatisticsService.getTotalPagesRead(history);
+    final personality = StatisticsService.getReadingPersonality(history);
+    final genreDist = StatisticsService.getGenreDistribution(history);
+    final topGenres = genreDist.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final displayGenres = topGenres.take(3).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -164,19 +175,130 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // Stats Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildStatItem(context, "$booksRead", "Livres lus"),
-                      _buildStatItem(context, "${badges.length}", "Badges"),
-                      // Smart Stat: Favorite Genre
-                      _buildStatItem(context,
-                          _getFavoriteGenre(historyProvider), "Genre Favori"),
-                    ],
+                  // Personality Banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.secondary.withValues(alpha: 0.1),
+                          theme.colorScheme.primary.withValues(alpha: 0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color:
+                            theme.colorScheme.secondary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Profil de Lecteur",
+                          style: TextStyle(
+                            color: theme.colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          personality,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        if (booksRead > 0) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            "Basé sur vos lectures récentes",
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 12),
+                          ),
+                        ]
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 30),
+
+                  // Enhanced Stats Grid
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildRichStatCard(
+                          context,
+                          "$booksRead",
+                          "Livres lus",
+                          Icons.menu_book_rounded,
+                          Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildRichStatCard(
+                          context,
+                          "$totalPages",
+                          "Pages lues",
+                          Icons.pages_rounded,
+                          Colors.purple,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Verification of "Infos Pertinentes" - Recommendation Analysis
+                  if (displayGenres.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      "Vos Préférences",
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...displayGenres.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(entry.key,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600)),
+                                Text("${entry.value.toStringAsFixed(1)}%",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: entry.value / 100,
+                                minHeight: 8,
+                                backgroundColor: theme.cardColor,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  theme.colorScheme.primary
+                                      .withValues(alpha: 0.8),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+
+                  const SizedBox(height: 30),
 
                   // Badges Section
                   Text(
@@ -315,19 +437,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  String _getFavoriteGenre(HistoryProvider history) {
-    if (history.history.isEmpty) return "-";
-    // Count genres
-    final Map<String, int> genreCounts = {};
-    for (var book in history.history) {
-      genreCounts[book.genre] = (genreCounts[book.genre] ?? 0) + 1;
-    }
-    // Find max
-    var sorted = genreCounts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    return sorted.first.key;
-  }
-
   void _showEditNameDialog(BuildContext context, UserProfileProvider provider) {
     final TextEditingController controller =
         TextEditingController(text: provider.userName);
@@ -362,26 +471,51 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+  Widget _buildRichStatCard(BuildContext context, String value, String label,
+      IconData icon, Color color) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
-        ),
-      ],
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

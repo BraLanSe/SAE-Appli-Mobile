@@ -86,10 +86,17 @@ class RecommendationEngine {
       }
 
       // Author Score
+      // Author Score
       int aScore = authorScores[book.author] ?? 0;
       if (aScore > 0) {
         score += 3.0; // Bonus for author
         reasons.add("Auteur similaire");
+      }
+
+      // Popularity boost (small)
+      if ((book.popularity ?? 0) > 95) {
+        score += 0.5;
+        // Don't add reason to keep it clean, unless it's the only reason
       }
 
       if (score > 0) {

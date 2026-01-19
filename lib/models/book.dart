@@ -1,5 +1,5 @@
 class Book {
-  final String id;             
+  final String id;
   final String title;
   final String author;
   final String genre;
@@ -10,9 +10,9 @@ class Book {
   final DateTime? dateAdded;
 
   // --- Champs utilisés pour le système de recommandations ---
-  int clicks;            // nombre de fois que le livre a été ouvert
-  int favorites;         // nombre de fois ajouté aux favoris
-  double minutesRead;    // temps passé à lire le livre
+  int clicks; // nombre de fois que le livre a été ouvert
+  int favorites; // nombre de fois ajouté aux favoris
+  double minutesRead; // temps passé à lire le livre
 
   Book({
     required this.id,
@@ -26,7 +26,10 @@ class Book {
     this.clicks = 0,
     this.favorites = 0,
     this.minutesRead = 0,
+    this.pageCount = 0,
   });
+
+  final int pageCount;
 
   /// Score de recommandation automatique
   double get score {

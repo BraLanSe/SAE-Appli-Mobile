@@ -12,6 +12,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 100,
     dateAdded: DateTime(2023, 1, 1),
+    pageCount: 96,
   ),
   Book(
     id: '2',
@@ -24,6 +25,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 95,
     dateAdded: DateTime(2023, 2, 1),
+    pageCount: 328,
   ),
   Book(
     id: '3',
@@ -36,6 +38,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 120,
     dateAdded: DateTime(2023, 3, 1),
+    pageCount: 305,
   ),
   Book(
     id: '4',
@@ -48,6 +51,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 110,
     dateAdded: DateTime(2023, 4, 1),
+    pageCount: 527,
   ),
   Book(
     id: '5',
@@ -60,6 +64,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 105,
     dateAdded: DateTime(2023, 5, 1),
+    pageCount: 896,
   ),
   Book(
     id: '6',
@@ -72,6 +77,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 102,
     dateAdded: DateTime(2023, 6, 1),
+    pageCount: 310,
   ),
   Book(
     id: '7',
@@ -84,6 +90,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 98,
     dateAdded: DateTime(2023, 7, 1),
+    pageCount: 163,
   ),
   Book(
     id: '8',
@@ -96,6 +103,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 97,
     dateAdded: DateTime(2023, 8, 1),
+    pageCount: 255,
   ),
   Book(
     id: '9',
@@ -108,6 +116,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 99,
     dateAdded: DateTime(2023, 9, 1),
+    pageCount: 1462,
   ),
   Book(
     id: '10',
@@ -120,6 +129,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 88,
     dateAdded: DateTime(2023, 10, 1),
+    pageCount: 435,
   ),
   Book(
     id: '11',
@@ -132,6 +142,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 92,
     dateAdded: DateTime(2023, 11, 1),
+    pageCount: 447,
   ),
   Book(
     id: '12',
@@ -144,6 +155,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 90,
     dateAdded: DateTime(2023, 12, 1),
+    pageCount: 1048,
   ),
   Book(
     id: '13',
@@ -156,6 +168,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 85,
     dateAdded: DateTime(2024, 1, 1),
+    pageCount: 320,
   ),
   Book(
     id: '14',
@@ -168,6 +181,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 93,
     dateAdded: DateTime(2024, 2, 1),
+    pageCount: 640,
   ),
   Book(
     id: '15',
@@ -180,6 +194,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 91,
     dateAdded: DateTime(2024, 3, 1),
+    pageCount: 662,
   ),
   Book(
     id: '16',
@@ -192,6 +207,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 89,
     dateAdded: DateTime(2024, 4, 1),
+    pageCount: 736,
   ),
   Book(
     id: '17',
@@ -204,6 +220,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 87,
     dateAdded: DateTime(2024, 5, 1),
+    pageCount: 271,
   ),
   Book(
     id: '18',
@@ -216,6 +233,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 94,
     dateAdded: DateTime(2024, 6, 1),
+    pageCount: 432,
   ),
   Book(
     id: '19',
@@ -228,6 +246,7 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 96,
     dateAdded: DateTime(2024, 7, 1),
+    pageCount: 280,
   ),
   Book(
     id: '20',
@@ -240,5 +259,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 86,
     dateAdded: DateTime(2024, 8, 1),
+    pageCount: 112,
   ),
 ];
