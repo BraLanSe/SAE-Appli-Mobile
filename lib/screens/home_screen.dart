@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import 'package:provider/provider.dart';
-import '../providers/history_provider.dart';
+// import '../providers/history_provider.dart';
 
 import '../utils/data.dart';
 // import '../screens/book_detail_screen.dart'; // No longer needed
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
     final Book featuredBook = allBooks.isNotEmpty ? allBooks.last : allBooks[0];
 
     // Get real data from providers
-    final historyProvider = Provider.of<HistoryProvider>(context);
+    // final historyProvider = Provider.of<HistoryProvider>(context); // Unused
     // final favoritesProvider = Provider.of<FavoritesProvider>(context); // Unused
 
     // Recent books remains as is (or could be trending)
