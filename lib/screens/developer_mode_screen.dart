@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../utils/data.dart';
 import '../services/recommendation_engine.dart';
+import '../services/statistics_service.dart';
 import '../providers/history_provider.dart';
 import '../providers/favorites_provider.dart';
 
@@ -14,8 +15,14 @@ class DeveloperModeScreen extends StatefulWidget {
 }
 
 class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
-  int _benchmarkResultMs = 0;
+  int _benchmarkAvgMs = 0;
+  int _benchmarkMinMs = 0;
+  int _benchmarkMaxMs = 0;
   bool _isBenchmarking = false;
+
+  // Battery simulation stats
+  String _batteryStatus = "Optimale";
+  double _estimatedDrainPerHour = 0.5; // % per hour active
 
   void _runBenchmark() async {
     setState(() {
@@ -25,25 +32,95 @@ class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
     // Simulate heavy work / measure actual recommendation speed
     await Future.delayed(const Duration(milliseconds: 100)); // UI breadth
 
-    final stopwatch = Stopwatch()..start();
+    final stopwatch = Stopwatch();
+    int totalUs = 0; // Microseconds
+    int minUs = 9999999;
+    int maxUs = 0;
 
-    // Run recommendation engine 1000 times to get a meaningful average
-    for (int i = 0; i < 1000; i++) {
+    // Run recommendation engine 500 times to get meaningful stats
+    for (int i = 0; i < 500; i++) {
+      stopwatch.reset();
+      stopwatch.start();
+
       RecommendationEngine.compute(
         allBooks: allBooks,
         userHistory: [], // Worst case cold start
         userFavorites: [],
       );
-    }
 
-    stopwatch.stop();
+      stopwatch.stop();
+      int elapsed = stopwatch.elapsedMicroseconds;
+
+      totalUs += elapsed;
+      if (elapsed < minUs) minUs = elapsed;
+      if (elapsed > maxUs) maxUs = elapsed;
+    }
 
     if (mounted) {
       setState(() {
-        _benchmarkResultMs = stopwatch.elapsedMilliseconds;
+        _benchmarkAvgMs = (totalUs / 500).round(); // Avg in Microseconds
+        _benchmarkMinMs = minUs;
+        _benchmarkMaxMs = maxUs;
         _isBenchmarking = false;
+
+        // Update simulated battery stats based on load
+        if (_benchmarkAvgMs > 5000) {
+          _batteryStatus = "Intensive";
+          _estimatedDrainPerHour = 5.0;
+        } else {
+          _batteryStatus = "Faible (Mode Passif)";
+          _estimatedDrainPerHour = 0.8;
+        }
       });
     }
+  }
+
+  List<Widget> _buildGenreDistribution(BuildContext context) {
+    final dist = StatisticsService.getGenreDistribution(allBooks);
+    final sorted = dist.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return sorted.take(4).map((e) {
+      final theme = Theme.of(context);
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 4.0),
+        child: Row(
+          children: [
+            Expanded(
+                flex: 2,
+                child: Text(e.key, style: const TextStyle(fontSize: 12))),
+            Expanded(
+                flex: 5,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: e.value / 100,
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+            const SizedBox(width: 8),
+            Text("${e.value.toStringAsFixed(0)}%",
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }).toList();
   }
 
   @override
@@ -61,7 +138,7 @@ class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Performances & Métriques",
+          "Performances & Analytics",
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -89,41 +166,72 @@ class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
           const SizedBox(height: 16),
           _buildInfoCard(
             context,
-            title: "Performance Algorithme",
+            title: "Performance Algorithme (µs)",
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Benchmark : 1000 cycles de recommandation"),
-                const SizedBox(height: 8),
+                const Text("Benchmark : 500 cycles (Microsecondes)"),
+                const SizedBox(height: 12),
                 _isBenchmarking
                     ? const LinearProgressIndicator()
-                    : _buildMetricRow(
-                        "Temps Total", "$_benchmarkResultMs ms", Colors.orange),
-                if (!_isBenchmarking)
-                  _buildMetricRow(
-                      "Moyenne par appel",
-                      "${(_benchmarkResultMs / 1000).toStringAsFixed(3)} ms",
-                      Colors.green),
+                    : Column(
+                        children: [
+                          _buildMetricRow("Temps Moyen", "$_benchmarkAvgMs µs",
+                              Colors.green),
+                          _buildMetricRow(
+                              "Temps Min", "$_benchmarkMinMs µs", Colors.blue),
+                          _buildMetricRow("Temps Max", "$_benchmarkMaxMs µs",
+                              Colors.orange),
+                        ],
+                      ),
               ],
             ),
             action: TextButton.icon(
               onPressed: _runBenchmark,
               icon: const Icon(Icons.refresh),
-              label: const Text("Relancer Benchmark"),
+              label: const Text("Relancer"),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // New Analytics Section
+          _buildInfoCard(
+            context,
+            title: "Analyse du Corpus (Data Science)",
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildMetricRow(
+                    "Genre Dominant",
+                    StatisticsService.getMostPopularGenre(allBooks),
+                    Colors.purple),
+                _buildMetricRow(
+                    "Diversité Auteurs (Index)",
+                    "${StatisticsService.getDiversityScore(allBooks).toStringAsFixed(1)}%",
+                    Colors.blue),
+                _buildMetricRow(
+                    "Popularité Moyenne",
+                    "${StatisticsService.getAveragePopularity(allBooks).toStringAsFixed(1)} / 100",
+                    Colors.orange),
+                const SizedBox(height: 12),
+                const Text("Distribution des Genres :",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ..._buildGenreDistribution(context),
+              ],
             ),
           ),
           const SizedBox(height: 16),
           _buildInfoCard(
             context,
-            title: "Consommation Ressources",
+            title: "Consommation Énergétique",
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildMetricRow("Usage Actif", _batteryStatus, Colors.green),
                 _buildMetricRow(
-                    "Impact Batterie", "Faible (Mode Passif)", Colors.green),
-                _buildMetricRow(
-                    "Appels Réseau", "0 (Mode Hors-Ligne)", Colors.green),
-                _buildMetricRow("FPS UI", "60 (Estimé)", Colors.blue),
+                    "Tâche de fond", "0 mAh (Mise en veille)", Colors.green),
+                _buildMetricRow("Estimation Drain",
+                    "~$_estimatedDrainPerHour % / heure", Colors.grey),
               ],
             ),
           ),
@@ -164,7 +272,7 @@ class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
                 Text(
                   title,
                   style: GoogleFonts.playfairDisplay(
-                    fontSize: 18,
+                    fontSize: 17, // Slightly smaller to fit
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
                   ),
