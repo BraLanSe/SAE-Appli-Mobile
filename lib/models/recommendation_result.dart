@@ -4,7 +4,7 @@ class RecommendationResult {
   final Book book;
   final double score;
   final int matchPercentage;
-  final String reason;
+  String reason;
 
   RecommendationResult({
     required this.book,

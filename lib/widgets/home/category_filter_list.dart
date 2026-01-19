@@ -9,7 +9,14 @@ class CategoryFilterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Liste des genres pour les filtres
-    final categories = ["Tous", "Fiction", "Fantasy", "Thriller", "Sci-Fi"];
+    final categories = [
+      "Tous",
+      "Roman",
+      "Fiction",
+      "Fantasy",
+      "Thriller",
+      "Sci-Fi"
+    ];
 
     return SizedBox(
       height: 40,

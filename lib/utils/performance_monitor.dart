@@ -70,4 +70,14 @@ class PerformanceMonitor {
       debugPrint("[BATTERY] Failed to get stats: $e");
     }
   }
+
+  /// Récupère le niveau de batterie actuel
+  Future<int> getBatteryLevel() async {
+    try {
+      return await _battery.batteryLevel;
+    } catch (e) {
+      debugPrint("[BATTERY] Failed to get level: $e");
+      return 100; // Assume full if failure to avoid forcing Eco mode
+    }
+  }
 }

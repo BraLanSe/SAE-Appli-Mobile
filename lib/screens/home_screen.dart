@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import 'package:provider/provider.dart';
-import '../providers/history_provider.dart';
+// import '../providers/history_provider.dart';
 
 import '../utils/data.dart';
 // import '../screens/book_detail_screen.dart'; // No longer needed
@@ -12,6 +12,7 @@ import '../services/recommendation_engine.dart';
 import '../models/recommendation_result.dart';
 import 'main_screen.dart';
 import 'profile_screen.dart';
+import 'statistics_screen.dart';
 
 // Import new widgets
 import '../widgets/home/featured_book_banner.dart';
@@ -36,14 +37,14 @@ class HomeScreen extends StatelessWidget {
     final Book featuredBook = allBooks.isNotEmpty ? allBooks.last : allBooks[0];
 
     // Get real data from providers
-    final historyProvider = Provider.of<HistoryProvider>(context);
+    // final historyProvider = Provider.of<HistoryProvider>(context); // Unused
     // final favoritesProvider = Provider.of<FavoritesProvider>(context); // Unused
 
     // Recent books remains as is (or could be trending)
     final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
 
     // Stats
-    final historyCount = historyProvider.history.length;
+    // final historyCount = historyProvider.history.length; // Unused
 
     final theme = Theme.of(context);
     // final isDarkMode = theme.brightness == Brightness.dark; // Unused here now
@@ -51,7 +52,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Bookwise",
+          "BookWise",
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
@@ -98,29 +99,43 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.menu_book_rounded,
-                            color: theme.colorScheme.primary, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          "$historyCount Lus",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const StatisticsScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.bar_chart_rounded,
+                              color: Colors.white, size: 20),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "Stats",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],
