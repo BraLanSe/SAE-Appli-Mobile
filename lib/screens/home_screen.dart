@@ -20,8 +20,34 @@ import '../widgets/home/category_filter_list.dart';
 import '../widgets/home/recommended_carousel.dart';
 import '../widgets/home/trending_book_list.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<RecommendationResult>> _recommendationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendations();
+  }
+
+  void _loadRecommendations() {
+    setState(() {
+      // We pass the list of all books to the engine
+      _recommendationFuture = RecommendationEngine.compute(allBooks: allBooks);
+    });
+  }
+
+  Future<void> _handleRefresh() async {
+    _loadRecommendations();
+    // Await the future so the refresh indicator spins until done
+    await _recommendationFuture;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +62,10 @@ class HomeScreen extends StatelessWidget {
     // Data simulation
     final Book featuredBook = allBooks.isNotEmpty ? allBooks.last : allBooks[0];
 
-    // Get real data from providers
-    // final historyProvider = Provider.of<HistoryProvider>(context); // Unused
-    // final favoritesProvider = Provider.of<FavoritesProvider>(context); // Unused
-
     // Recent books remains as is (or could be trending)
     final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
 
-    // Stats
-    // final historyCount = historyProvider.history.length; // Unused
-
     final theme = Theme.of(context);
-    // final isDarkMode = theme.brightness == Brightness.dark; // Unused here now
 
     return Scaffold(
       appBar: AppBar(
@@ -56,6 +74,18 @@ class HomeScreen extends StatelessWidget {
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF673AB7), // Deep Purple 500
+                Color(0xFF9C27B0), // Purple 500
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -68,155 +98,160 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Greeting & Stats Row
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        greeting,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        "Amateur de livres",
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const StatisticsScreen()),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: theme.colorScheme.primary,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Greeting & Stats Row
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          greeting,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.bar_chart_rounded,
-                              color: Colors.white, size: 20),
-                          const SizedBox(width: 8),
-                          const Text(
-                            "Stats",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                        ),
+                        Text(
+                          "Amateur de livres",
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const StatisticsScreen()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.bar_chart_rounded,
+                                color: Colors.white, size: 20),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Stats",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-            // Featured Book Banner
-            FeaturedBookBanner(featuredBook: featuredBook),
-
-            const SizedBox(height: 24),
-
-            // Quick Categories
-            const CategoryFilterList(),
-
-            const SizedBox(height: 24),
-
-            // Recommended Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Recommandé",
-                    style: GoogleFonts.playfairDisplay(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Provider.of<FilterProvider>(context, listen: false)
-                          .setGenre("All");
-                      MainScreen.switchToTab(context, 1);
-                    },
-                    child: const Text("Voir tout"),
-                  ),
-                ],
-              ),
-            ),
-
-            // Horizontal Carousel with FutureBuilder
-            FutureBuilder<List<RecommendationResult>>(
-              future: RecommendationEngine.compute(allBooks: allBooks),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    height: 320,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                } else if (snapshot.hasError) {
-                  return const SizedBox(
-                    height: 320,
-                    child: Center(child: Text("Erreur de chargement")),
-                  );
-                }
-
-                final results = snapshot.data ?? [];
-                return RecommendedCarousel(recommendedResults: results);
-              },
-            ),
-
-            // Trending Title
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-              child: Text(
-                "Tendances",
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
+                    )
+                  ],
                 ),
               ),
-            ),
 
-            // Vertical list snippet
-            TrendingBookList(books: recentBooks),
+              // Featured Book Banner
+              FeaturedBookBanner(featuredBook: featuredBook),
 
-            const SizedBox(height: 80), // Space for bottom nav
-          ],
+              const SizedBox(height: 24),
+
+              // Quick Categories
+              const CategoryFilterList(),
+
+              const SizedBox(height: 24),
+
+              // Recommended Title
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Recommandé",
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Provider.of<FilterProvider>(context, listen: false)
+                            .setGenre("All");
+                        MainScreen.switchToTab(context, 1);
+                      },
+                      child: const Text("Voir tout"),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Horizontal Carousel with Cached Future
+              FutureBuilder<List<RecommendationResult>>(
+                future: _recommendationFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 320,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const SizedBox(
+                      height: 320,
+                      child: Center(child: Text("Erreur de chargement")),
+                    );
+                  }
+
+                  final results = snapshot.data ?? [];
+                  return RecommendedCarousel(recommendedResults: results);
+                },
+              ),
+
+              // Trending Title
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                child: Text(
+                  "Tendances",
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+
+              // Vertical list snippet
+              TrendingBookList(books: recentBooks),
+
+              const SizedBox(height: 80), // Space for bottom nav
+            ],
+          ),
         ),
       ),
     );

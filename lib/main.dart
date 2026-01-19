@@ -71,7 +71,8 @@ class BookwiseApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            primarySwatch: Colors.indigo, // Changed to Indigo
+            primarySwatch: Colors
+                .deepPurple, // Changed to Deep Purple for "Violet Profond"
             scaffoldBackgroundColor:
                 const Color(0xFFF8FAFC), // Off-white (Slate 50)
             brightness: Brightness.light,
@@ -93,18 +94,17 @@ class BookwiseApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            primarySwatch: Colors.indigo,
+            primarySwatch: Colors.deepPurple,
             brightness: Brightness.dark,
             fontFamily: GoogleFonts.roboto().fontFamily,
-            scaffoldBackgroundColor:
-                const Color(0xFF0F172A), // Slate 900 (Darker Indigo-ish)
+            scaffoldBackgroundColor: const Color(0xFF0F172A), // Slate 900
             canvasColor: const Color(0xFF1E293B), // Slate 800
             cardColor: const Color(0xFF1E293B), // Slate 800
 
             // Define a refined ColorScheme
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF6366F1), // Indigo 500
-              secondary: Color(0xFF14B8A6), // Teal 500 (Accent)
+              primary: Color(0xFF7C4DFF), // Deep Purple Accent 200
+              secondary: Color(0xFFE040FB), // Purple Accent 200
               surface: Color(0xFF1E293B),
               onSurface: Color(0xFFF1F5F9), // Slate 100
               error: Color(0xFFEF4444),
@@ -125,7 +125,7 @@ class BookwiseApp extends StatelessWidget {
             // Bottom Navigation Bar Theme
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: Color(0xFF1E2230),
-              selectedItemColor: Color(0xFF8B5CF6),
+              selectedItemColor: Color(0xFF7C4DFF), // Deep Purple Accent
               unselectedItemColor: Colors.grey,
             ),
 
@@ -134,8 +134,8 @@ class BookwiseApp extends StatelessWidget {
               backgroundColor: const Color(0xFF1E2230),
               labelStyle: const TextStyle(color: Colors.white70),
               secondarySelectedColor:
-                  const Color(0xFF8B5CF6).withValues(alpha: 0.3),
-              secondaryLabelStyle: const TextStyle(color: Color(0xFF8B5CF6)),
+                  const Color(0xFF7C4DFF).withValues(alpha: 0.3),
+              secondaryLabelStyle: const TextStyle(color: Color(0xFF7C4DFF)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
