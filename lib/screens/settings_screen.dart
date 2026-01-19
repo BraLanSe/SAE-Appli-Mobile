@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
@@ -81,6 +82,23 @@ class SettingsScreen extends StatelessWidget {
                   builder: (_) => const OnboardingScreen(isFromSettings: true),
                 ),
               );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.restart_alt_rounded, color: Colors.teal),
+            title: const Text("Réinitialiser l'intro"),
+            subtitle: const Text("Pour revoir l'intro au prochain lancement"),
+            onTap: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('seen_onboarding', false);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text(
+                          "Intro réinitialisée pour le prochain lancement")),
+                );
+              }
             },
           ),
           const Divider(),

@@ -42,10 +42,8 @@ class _DeveloperModeScreenState extends State<DeveloperModeScreen> {
       stopwatch.reset();
       stopwatch.start();
 
-      RecommendationEngine.compute(
+      await RecommendationEngine.compute(
         allBooks: allBooks,
-        userHistory: [], // Worst case cold start
-        userFavorites: [],
       );
 
       stopwatch.stop();

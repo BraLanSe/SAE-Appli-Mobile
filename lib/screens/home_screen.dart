@@ -3,16 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import 'package:provider/provider.dart';
 import '../providers/history_provider.dart';
-import '../providers/favorites_provider.dart'; // Added
 
 import '../utils/data.dart';
-import '../screens/book_detail_screen.dart';
-import '../widgets/fade_in_animation.dart';
+// import '../screens/book_detail_screen.dart'; // No longer needed
+// import '../widgets/fade_in_animation.dart'; // No longer needed directly here
 import '../providers/filter_provider.dart';
-import '../services/recommendation_engine.dart'; // Added
-import '../models/recommendation_result.dart'; // Added
+import '../services/recommendation_engine.dart';
+import '../models/recommendation_result.dart';
 import 'main_screen.dart';
-import 'profile_screen.dart'; // Added
+import 'profile_screen.dart';
+
+// Import new widgets
+import '../widgets/home/featured_book_banner.dart';
+import '../widgets/home/category_filter_list.dart';
+import '../widgets/home/recommended_carousel.dart';
+import '../widgets/home/trending_book_list.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -32,16 +37,7 @@ class HomeScreen extends StatelessWidget {
 
     // Get real data from providers
     final historyProvider = Provider.of<HistoryProvider>(context);
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-
-    // Compute recommendations dynamically
-    // Compute recommendations dynamically
-    final List<RecommendationResult> recommendedResults =
-        RecommendationEngine.compute(
-      allBooks: allBooks,
-      userHistory: historyProvider.history,
-      userFavorites: favoritesProvider.favorites,
-    );
+    // final favoritesProvider = Provider.of<FavoritesProvider>(context); // Unused
 
     // Recent books remains as is (or could be trending)
     final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
@@ -50,7 +46,7 @@ class HomeScreen extends StatelessWidget {
     final historyCount = historyProvider.history.length;
 
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    // final isDarkMode = theme.brightness == Brightness.dark; // Unused here now
 
     return Scaffold(
       appBar: AppBar(
@@ -132,119 +128,12 @@ class HomeScreen extends StatelessWidget {
             ),
 
             // Featured Book Banner
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BookDetailScreen(
-                          book: featuredBook, heroTag: 'featured_home'),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                      image: AssetImage(featuredBook.imagePath),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withValues(alpha: 0.4),
-                        BlendMode.darken,
-                      ),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            "Livre du moment",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          featuredBook.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.playfairDisplay(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          featuredBook.author,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            FeaturedBookBanner(featuredBook: featuredBook),
 
             const SizedBox(height: 24),
 
             // Quick Categories
-            SizedBox(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  ...["Tous", "Roman", "Fantasy", "Thriller", "Sci-Fi"]
-                      .map((genre) {
-                    final filterProvider = Provider.of<FilterProvider>(context);
-                    bool isActive = false;
-                    if (genre == "Tous" &&
-                        filterProvider.selectedGenre == "All") {
-                      isActive = true;
-                    } else if (genre == "Sci-Fi" &&
-                        filterProvider.selectedGenre == "Science-Fiction") {
-                      isActive = true;
-                    } else if (genre == "Thriller" &&
-                        filterProvider.selectedGenre ==
-                            "Thriller Psychologique") {
-                      isActive = true;
-                    } else if (genre == filterProvider.selectedGenre) {
-                      isActive = true;
-                    }
-
-                    return _buildCategoryChip(context, genre, isActive);
-                  }),
-                ],
-              ),
-            ),
+            const CategoryFilterList(),
 
             const SizedBox(height: 24),
 
@@ -274,21 +163,25 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // Horizontal Carousel
-            SizedBox(
-              height: 280,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: recommendedResults.length,
-                itemBuilder: (context, index) {
-                  final result = recommendedResults[index];
-                  return FadeInAnimation(
-                    delay: index * 2,
-                    child: _buildHorizontalBookCard(context, result),
+            // Horizontal Carousel with FutureBuilder
+            FutureBuilder<List<RecommendationResult>>(
+              future: RecommendationEngine.compute(allBooks: allBooks),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 320,
+                    child: Center(child: CircularProgressIndicator()),
                   );
-                },
-              ),
+                } else if (snapshot.hasError) {
+                  return const SizedBox(
+                    height: 320,
+                    child: Center(child: Text("Erreur de chargement")),
+                  );
+                }
+
+                final results = snapshot.data ?? [];
+                return RecommendedCarousel(recommendedResults: results);
+              },
             ),
 
             // Trending Title
@@ -305,238 +198,9 @@ class HomeScreen extends StatelessWidget {
             ),
 
             // Vertical list snippet
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: recentBooks.length,
-              itemBuilder: (context, index) {
-                final book = recentBooks[index];
-                return FadeInAnimation(
-                  delay: (index + 2) * 2,
-                  child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: isDarkMode
-                          ? Border.all(
-                              color: Colors.white.withValues(alpha: 0.05))
-                          : null,
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(8),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          book.imagePath,
-                          width: 50,
-                          height: 75,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey, width: 50, height: 75),
-                        ),
-                      ),
-                      title: Text(
-                        book.title,
-                        style: GoogleFonts.playfairDisplay(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      subtitle: Text(
-                        book.author,
-                        style: TextStyle(
-                          color: theme.textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                      trailing: Icon(Icons.chevron_right_rounded,
-                          color: theme.colorScheme.primary),
-                      onTap: () {
-                        Provider.of<HistoryProvider>(context, listen: false)
-                            .addToHistory(book);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BookDetailScreen(
-                                book: book,
-                                heroTag: 'home_vertical_${book.id}'),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
+            TrendingBookList(books: recentBooks),
+
             const SizedBox(height: 80), // Space for bottom nav
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryChip(BuildContext context, String label, bool isActive) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
-    return Container(
-      margin: const EdgeInsets.only(right: 12),
-      child: Material(
-        color: isActive ? theme.colorScheme.primary : theme.cardColor,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            final provider =
-                Provider.of<FilterProvider>(context, listen: false);
-
-            // Clear search query to avoid conflicting filters (e.g. searching 'Harry' + filtering 'Sci-Fi')
-            provider.setSearchQuery("");
-
-            String value = label;
-            if (label == "Tous") {
-              value = "All";
-            }
-            if (label == "Sci-Fi") {
-              value = "Science-Fiction";
-            }
-            if (label == "Thriller") {
-              value = "Thriller Psychologique"; // Map to exact data genre
-            }
-
-            provider.setGenre(value);
-            MainScreen.switchToTab(context, 1);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: isActive
-                  ? null
-                  : Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isActive
-                    ? Colors.white
-                    : (isDarkMode ? Colors.white : Colors.grey[700]),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHorizontalBookCard(
-      BuildContext context, RecommendationResult result) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-    final book = result.book;
-
-    return Container(
-      width: 150, // Slightly simpler width
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: InkWell(
-        onTap: () {
-          Provider.of<HistoryProvider>(context, listen: false)
-              .addToHistory(book);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BookDetailScreen(
-                book: book,
-                heroTag: 'home_carousel_${book.id}',
-                matchPercentage: result.matchPercentage,
-              ),
-            ),
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Hero(
-              tag: 'home_carousel_${book.id}',
-              child: Stack(
-                children: [
-                  Container(
-                    height: 220,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isDarkMode
-                              ? Colors.black.withValues(alpha: 0.3)
-                              : Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                      image: DecorationImage(
-                        image: AssetImage(book.imagePath),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  if (result.matchPercentage > 0)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(12),
-                          border: isDarkMode
-                              ? Border.all(color: Colors.white24, width: 1.5)
-                              : null,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 4,
-                            )
-                          ],
-                        ),
-                        child: Text(
-                          "${result.matchPercentage}%",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              book.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.playfairDisplay(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-            Text(
-              result.reason,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11,
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
           ],
         ),
       ),
