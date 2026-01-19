@@ -184,7 +184,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     'Prêt pour votre prochaine lecture ?\nVotre bibliothèque intelligente, accessible partout, même hors connexion.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
@@ -195,26 +195,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   delay: 8,
                   child: ElevatedButton(
                     onPressed: () async {
-                      // Logic to determine next screen
+                      // Capture navigator to avoid async context usage issues
+                      final navigator = Navigator.of(context);
                       final prefs = await SharedPreferences.getInstance();
                       final seenOnboarding =
                           prefs.getBool('seen_onboarding') ?? false;
 
-                      if (!mounted) return;
-
                       if (seenOnboarding) {
-                        Navigator.pushReplacement(
-                          context,
+                        navigator.pushReplacement(
                           MaterialPageRoute(builder: (_) => const MainScreen()),
                         );
                       } else {
-                        // Go to Onboarding if not seen
-                        // We need to import OnboardingScreen first (will add import)
-                        Navigator.pushReplacement(
-                          context,
+                        navigator.pushReplacement(
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  const OnboardingScreen()), // Will resolve import soon
+                              builder: (_) => const OnboardingScreen()),
                         );
                       }
                     },
@@ -222,7 +216,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF4A148C),
                       elevation: 10,
-                      shadowColor: Colors.black.withOpacity(0.5),
+                      shadowColor: Colors.black.withValues(alpha: 0.5),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 48, vertical: 20),
                       shape: RoundedRectangleBorder(

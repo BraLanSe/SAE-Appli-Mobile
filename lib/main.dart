@@ -112,7 +112,7 @@ class BookwiseApp extends StatelessWidget {
 
             // AppBar Theme
             appBarTheme: AppBarTheme(
-              backgroundColor: const Color(0xFF0F172A).withOpacity(0.8),
+              backgroundColor: const Color(0xFF0F172A).withValues(alpha: 0.8),
               elevation: 0,
               iconTheme: const IconThemeData(color: Colors.white),
               titleTextStyle: GoogleFonts.playfairDisplay(

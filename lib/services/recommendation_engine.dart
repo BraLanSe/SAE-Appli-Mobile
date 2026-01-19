@@ -154,7 +154,7 @@ class RecommendationEngine {
   /// Calcule l'indice de Jaccard entre deux livres.
   /// Considère (Titre Mots-clés + Genre + Auteur) comme un ensemble (Bag of Words).
   static double _calculateJaccardIndex(Book a, Book b) {
-    Set<String> _getTags(Book book) {
+    Set<String> getTags(Book book) {
       final tags = <String>{};
 
       // 1. Genre (Fort poids, on pourrait le mettre en MAJUSCULE pour unicité)
@@ -176,8 +176,8 @@ class RecommendationEngine {
       return tags;
     }
 
-    final setA = _getTags(a);
-    final setB = _getTags(b);
+    final setA = getTags(a);
+    final setB = getTags(b);
 
     final intersection = setA.intersection(setB).length;
     final union = setA.union(setB).length;

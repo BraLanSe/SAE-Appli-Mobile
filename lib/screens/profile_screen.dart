@@ -8,6 +8,8 @@ import '../screens/book_detail_screen.dart';
 import '../services/statistics_service.dart'; // Added
 import 'statistics_screen.dart';
 
+import 'settings_screen.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -42,6 +44,16 @@ class ProfileScreen extends StatelessWidget {
         ),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings_rounded,
+                color: theme.colorScheme.onSurface),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

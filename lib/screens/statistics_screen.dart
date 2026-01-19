@@ -166,7 +166,7 @@ class StatisticsScreen extends StatelessWidget {
                                     text = const Text('', style: style);
                                 }
                                 return SideTitleWidget(
-                                  axisSide: meta.axisSide,
+                                  meta: meta,
                                   space: 4,
                                   child: text,
                                 );
@@ -205,10 +205,10 @@ class StatisticsScreen extends StatelessWidget {
                       color: const Color(0xFF1E293B), // Dark slate
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: Colors.indigoAccent.withOpacity(0.3)),
+                          color: Colors.indigoAccent.withValues(alpha: 0.3)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.indigoAccent.withOpacity(0.1),
+                          color: Colors.indigoAccent.withValues(alpha: 0.1),
                           blurRadius: 10,
                           spreadRadius: 1,
                         )
@@ -263,7 +263,7 @@ class StatisticsScreen extends StatelessWidget {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 60, // Max scale
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
           ),
         ),
       ],
