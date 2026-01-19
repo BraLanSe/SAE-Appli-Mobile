@@ -4,6 +4,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/book.dart';
 import '../utils/data.dart';
+import '../providers/to_read_provider.dart'; // Added
+import 'package:provider/provider.dart'; // Added
 import '../widgets/book_card.dart';
 import '../widgets/shimmer_loading.dart';
 import 'reading_screen.dart'; // Added
@@ -86,6 +88,32 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             expandedHeight: 400.0,
             pinned: true,
             actions: [
+              Consumer<ToReadProvider>(
+                builder: (context, toReadProvider, _) {
+                  final isToRead = toReadProvider.isToRead(widget.book);
+                  return IconButton(
+                    icon: Icon(
+                      isToRead
+                          ? Icons.bookmark_added
+                          : Icons.bookmark_add_outlined,
+                      color: isToRead ? Colors.amber : Colors.white,
+                    ),
+                    tooltip:
+                        isToRead ? "Retirer de 'À lire'" : "Ajouter à 'À lire'",
+                    onPressed: () {
+                      toReadProvider.toggleToRead(widget.book);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isToRead
+                              ? "${widget.book.title} retiré de la liste À lire"
+                              : "${widget.book.title} ajouté à la liste À lire"),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {

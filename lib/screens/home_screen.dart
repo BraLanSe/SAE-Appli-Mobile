@@ -232,6 +232,10 @@ class HomeScreen extends StatelessWidget {
                     } else if (genre == "Sci-Fi" &&
                         filterProvider.selectedGenre == "Science-Fiction") {
                       isActive = true;
+                    } else if (genre == "Thriller" &&
+                        filterProvider.selectedGenre ==
+                            "Thriller Psychologique") {
+                      isActive = true;
                     } else if (genre == filterProvider.selectedGenre) {
                       isActive = true;
                     }
@@ -388,9 +392,21 @@ class HomeScreen extends StatelessWidget {
           onTap: () {
             final provider =
                 Provider.of<FilterProvider>(context, listen: false);
+
+            // Clear search query to avoid conflicting filters (e.g. searching 'Harry' + filtering 'Sci-Fi')
+            provider.setSearchQuery("");
+
             String value = label;
-            if (label == "Tous") value = "All";
-            if (label == "Sci-Fi") value = "Science-Fiction";
+            if (label == "Tous") {
+              value = "All";
+            }
+            if (label == "Sci-Fi") {
+              value = "Science-Fiction";
+            }
+            if (label == "Thriller") {
+              value = "Thriller Psychologique"; // Map to exact data genre
+            }
+
             provider.setGenre(value);
             MainScreen.switchToTab(context, 1);
           },
