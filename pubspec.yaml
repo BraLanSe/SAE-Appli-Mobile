@@ -17,16 +17,16 @@ dependencies:
   path: ^1.8.3
   provider: ^6.0.7
   shared_preferences: ^2.1.0
-  fl_chart: ^1.1.1
-  google_fonts: ^7.0.2
+  fl_chart: ^0.60.0
+  google_fonts: ^6.1.0
   uuid: ^4.5.2  # <-- version mise à jour compatible
-  share_plus: ^12.0.1
-  battery_plus: ^7.0.0
+  flutter_staggered_animations: ^1.1.1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
@@ -52,5 +52,23 @@ flutter:
     - assets/images/orgueil_et_prejuges.jpg
     - assets/images/le_parfum.jpg
     - assets/images/la_ferme_des_animaux.jpg
-    - assets/images/logobookwise.jpeg
-    - assets/images/logo_bookwise_new.jpg
+    - assets/images/logo_bookwise.png
+    - assets/images/l_etranger.jpg
+    - assets/images/monte_cristo.jpg
+    - assets/images/cent_ans_de_solitude.jpg
+    - assets/images/trone_de_fer.jpg
+    - assets/images/trois_mousquetaires.jpg
+    - assets/images/american_gods.jpg
+    - assets/images/crime_et_chatiment.jpg
+    - assets/images/gatsby.jpg
+    - assets/images/la_route.jpg
+    - assets/images/passe_miroir.jpg
+    - assets/images/raisins_de_la_colere.jpg
+    - assets/images/fahrenheit_451.jpg
+    - assets/images/beloved.jpg
+    - assets/images/maitre_et_marguerite.jpg
+    - assets/images/vieil_homme_et_la_mer.jpg
+    - assets/images/servante_ecarlate.jpg
+    - assets/images/hurlevent.jpg
+    - assets/images/rebecca.jpg
+    - assets/images/candide.jpg

@@ -12,7 +12,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 100,
     dateAdded: DateTime(2023, 1, 1),
-    pageCount: 96,
   ),
   Book(
     id: '2',
@@ -25,7 +24,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 95,
     dateAdded: DateTime(2023, 2, 1),
-    pageCount: 328,
   ),
   Book(
     id: '3',
@@ -38,7 +36,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 120,
     dateAdded: DateTime(2023, 3, 1),
-    pageCount: 305,
   ),
   Book(
     id: '4',
@@ -51,7 +48,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 110,
     dateAdded: DateTime(2023, 4, 1),
-    pageCount: 527,
   ),
   Book(
     id: '5',
@@ -60,11 +56,10 @@ final List<Book> allBooks = [
     genre: 'Science-Fiction',
     imagePath: 'assets/images/dune.jpg',
     description:
-        'Considéré comme l’un des plus grands romans de science-fiction, Dune se déroule sur la planète Arrakis.',
+        'Considéré comme l un des plus grands romans de science-fiction, Dune se déroule sur la planète Arrakis.',
     clicks: 0,
     popularity: 105,
     dateAdded: DateTime(2023, 5, 1),
-    pageCount: 896,
   ),
   Book(
     id: '6',
@@ -77,7 +72,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 102,
     dateAdded: DateTime(2023, 6, 1),
-    pageCount: 310,
   ),
   Book(
     id: '7',
@@ -90,7 +84,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 98,
     dateAdded: DateTime(2023, 7, 1),
-    pageCount: 163,
   ),
   Book(
     id: '8',
@@ -103,7 +96,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 97,
     dateAdded: DateTime(2023, 8, 1),
-    pageCount: 255,
   ),
   Book(
     id: '9',
@@ -116,7 +108,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 99,
     dateAdded: DateTime(2023, 9, 1),
-    pageCount: 1462,
   ),
   Book(
     id: '10',
@@ -129,7 +120,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 88,
     dateAdded: DateTime(2023, 10, 1),
-    pageCount: 435,
   ),
   Book(
     id: '11',
@@ -142,7 +132,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 92,
     dateAdded: DateTime(2023, 11, 1),
-    pageCount: 447,
   ),
   Book(
     id: '12',
@@ -155,7 +144,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 90,
     dateAdded: DateTime(2023, 12, 1),
-    pageCount: 1048,
   ),
   Book(
     id: '13',
@@ -168,7 +156,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 85,
     dateAdded: DateTime(2024, 1, 1),
-    pageCount: 320,
   ),
   Book(
     id: '14',
@@ -181,7 +168,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 93,
     dateAdded: DateTime(2024, 2, 1),
-    pageCount: 640,
   ),
   Book(
     id: '15',
@@ -194,7 +180,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 91,
     dateAdded: DateTime(2024, 3, 1),
-    pageCount: 662,
   ),
   Book(
     id: '16',
@@ -207,7 +192,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 89,
     dateAdded: DateTime(2024, 4, 1),
-    pageCount: 736,
   ),
   Book(
     id: '17',
@@ -220,7 +204,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 87,
     dateAdded: DateTime(2024, 5, 1),
-    pageCount: 271,
   ),
   Book(
     id: '18',
@@ -233,7 +216,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 94,
     dateAdded: DateTime(2024, 6, 1),
-    pageCount: 432,
   ),
   Book(
     id: '19',
@@ -246,7 +228,6 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 96,
     dateAdded: DateTime(2024, 7, 1),
-    pageCount: 280,
   ),
   Book(
     id: '20',
@@ -259,6 +240,234 @@ final List<Book> allBooks = [
     clicks: 0,
     popularity: 86,
     dateAdded: DateTime(2024, 8, 1),
-    pageCount: 112,
   ),
+  Book(
+    id: '21',
+    title: 'Le Comte de Monte-Cristo',
+    author: 'Alexandre Dumas',
+    genre: 'Aventure',
+    imagePath: 'assets/images/monte_cristo.jpg',
+    description:
+        'Edmond Dantès, injustement emprisonné, s\'évade et revient se venger sous l\'identité du mystérieux Comte de Monte-Cristo.',
+    clicks: 0,
+    popularity: 101,
+    dateAdded: DateTime(2024, 9, 1),
+  ),
+  Book(
+    id: '22',
+    title: 'Cent ans de solitude',
+    author: 'Gabriel García Márquez',
+    genre: 'Réalisme Magique',
+    imagePath: 'assets/images/cent_ans_de_solitude.jpg',
+    description:
+        'L\'histoire de la famille Buendía à travers sept générations dans le village imaginaire de Macondo.',
+    clicks: 0,
+    popularity: 95,
+    dateAdded: DateTime(2024, 10, 1),
+  ),
+  Book(
+    id: '23',
+    title: 'L\'Étranger',
+    author: 'Albert Camus',
+    genre: 'Philosophique',
+    imagePath: 'assets/images/l_etranger.jpg',
+    description:
+        'Meursault, un homme indifférent, commet un meurtre et affronte l\'absurdité de l\'existence lors de son procès.',
+    clicks: 0,
+    popularity: 88,
+    dateAdded: DateTime(2024, 11, 1),
+  ),
+  Book(
+    id: '24',
+    title: 'Le Trône de Fer',
+    author: 'George R.R. Martin',
+    genre: 'Fantasy',
+    imagePath: 'assets/images/trone_de_fer.jpg',
+    description:
+        'Dans le royaume de Westeros, plusieurs familles nobles se battent pour le contrôle du Trône de Fer.',
+    clicks: 0,
+    popularity: 115,
+    dateAdded: DateTime(2024, 12, 1),
+  ),
+  Book(
+    id: '25',
+    title: 'Les Trois Mousquetaires',
+    author: 'Alexandre Dumas',
+    genre: 'Aventure',
+    imagePath: 'assets/images/trois_mousquetaires.jpg',
+    description:
+        'D\'Artagnan quitte la Gascogne pour Paris et s\'allie à trois mousquetaires du roi dans des aventures palpitantes.',
+    clicks: 0,
+    popularity: 97,
+    dateAdded: DateTime(2025, 1, 1),
+  ),
+  Book(
+    id: '26',
+    title: 'American Gods',
+    author: 'Neil Gaiman',
+    genre: 'Fantasy Urbaine',
+    imagePath: 'assets/images/american_gods.jpg',
+    description:
+        'Shadow Moon se retrouve au coeur d\'une guerre entre les anciens dieux et les nouvelles divinités de l\'Amérique moderne.',
+    clicks: 0,
+    popularity: 93,
+    dateAdded: DateTime(2025, 2, 1),
+  ),
+  Book(
+    id: '27',
+    title: 'Crime et Châtiment',
+    author: 'Fiodor Dostoïevski',
+    genre: 'Classique',
+    imagePath: 'assets/images/crime_et_chatiment.jpg',
+    description:
+        'Raskolnikov, un étudiant pauvre, commet un meurtre et lutte avec la culpabilité et la rédemption.',
+    clicks: 0,
+    popularity: 91,
+    dateAdded: DateTime(2025, 3, 1),
+  ),
+  Book(
+    id: '28',
+    title: 'Gatsby le Magnifique',
+    author: 'F. Scott Fitzgerald',
+    genre: 'Classique',
+    imagePath: 'assets/images/gatsby.jpg',
+    description:
+        'Jay Gatsby, millionnaire mystérieux, organise des fêtes somptueuses pour reconquérir son amour perdu, Daisy.',
+    clicks: 0,
+    popularity: 94,
+    dateAdded: DateTime(2025, 4, 1),
+  ),
+  Book(
+    id: '29',
+    title: 'La Route',
+    author: 'Cormac McCarthy',
+    genre: 'Post-Apocalyptique',
+    imagePath: 'assets/images/la_route.jpg',
+    description:
+        'Un père et son fils traversent une Amérique dévastée, luttant pour leur survie dans un monde sans espoir.',
+    clicks: 0,
+    popularity: 89,
+    dateAdded: DateTime(2025, 5, 1),
+  ),
+  Book(
+    id: '30',
+    title: 'La Passe-miroir',
+    author: 'Christelle Dabos',
+    genre: 'Fantasy',
+    imagePath: 'assets/images/passe_miroir.jpg',
+    description:
+        'Ophélie, capable de lire le passé des objets et de traverser les miroirs, est fiancée contre son gré à Thorn.',
+    clicks: 0,
+    popularity: 87,
+    dateAdded: DateTime(2025, 6, 1),
+  ),
+  Book(
+    id: '31',
+    title: 'Les Raisins de la colère',
+    author: 'John Steinbeck',
+    genre: 'Drame',
+    imagePath: 'assets/images/raisins_de_la_colere.jpg',
+    description:
+        'La famille Joad fuit la misère du Dust Bowl pour chercher une vie meilleure en Californie pendant la Grande Dépression.',
+    clicks: 0,
+    popularity: 90,
+    dateAdded: DateTime(2025, 7, 1),
+  ),
+  Book(
+    id: '32',
+    title: 'Fahrenheit 451',
+    author: 'Ray Bradbury',
+    genre: 'Science-Fiction',
+    imagePath: 'assets/images/fahrenheit_451.jpg',
+    description:
+        'Dans une société où les livres sont interdits, Guy Montag, un pompier chargé de les brûler, commence à remettre en question son rôle.',
+    clicks: 0,
+    popularity: 92,
+    dateAdded: DateTime(2025, 8, 1),
+  ),
+  Book(
+    id: '33',
+    title: 'Beloved',
+    author: 'Toni Morrison',
+    genre: 'Drame',
+    imagePath: 'assets/images/beloved.jpg',
+    description:
+        'Sethe, ancienne esclave, est hantée par le fantôme de sa fille décédée dans l\'Ohio post-guerre de Sécession.',
+    clicks: 0,
+    popularity: 85,
+    dateAdded: DateTime(2025, 9, 1),
+  ),
+  Book(
+    id: '34',
+    title: 'Le Maître et Marguerite',
+    author: 'Mikhaïl Boulgakov',
+    genre: 'Fantasy',
+    imagePath: 'assets/images/maitre_et_marguerite.jpg',
+    description:
+        'Le diable arrive à Moscou et sème le chaos. Une histoire fascinante mêlant satire, amour et fantastique.',
+    clicks: 0,
+    popularity: 88,
+    dateAdded: DateTime(2025, 10, 1),
+  ),
+  Book(
+    id: '35',
+    title: 'Le Vieil Homme et la Mer',
+    author: 'Ernest Hemingway',
+    genre: 'Classique',
+    imagePath: 'assets/images/vieil_homme_et_la_mer.jpg',
+    description:
+        'Un vieux pêcheur cubain livre un combat épique contre un énorme marlin dans le Golfe du Mexique.',
+    clicks: 0,
+    popularity: 89,
+    dateAdded: DateTime(2025, 11, 1),
+  ),
+  Book(
+    id: '36',
+    title: 'La Servante écarlate',
+    author: 'Margaret Atwood',
+    genre: 'Dystopie',
+    imagePath: 'assets/images/servante_ecarlate.jpg',
+    description:
+        'Dans la République de Gilead, les femmes sont soumises à un régime totalitaire et réduites à leur fonction reproductrice.',
+    clicks: 0,
+    popularity: 98,
+    dateAdded: DateTime(2025, 12, 1),
+  ),
+  Book(
+    id: '37',
+    title: 'Les Hauts de Hurlevent',
+    author: 'Emily Brontë',
+    genre: 'Romance',
+    imagePath: 'assets/images/hurlevent.jpg',
+    description:
+        'Une histoire d\'amour passionnée et destructrice entre Heathcliff et Catherine dans les landes anglaises.',
+    clicks: 0,
+    popularity: 86,
+    dateAdded: DateTime(2026, 1, 1),
+  ),
+  Book(
+    id: '38',
+    title: 'Rebecca',
+    author: 'Daphne du Maurier',
+    genre: 'Thriller',
+    imagePath: 'assets/images/rebecca.jpg',
+    description:
+        'Une jeune mariée arrive à Manderley et découvre que l\'ombre de Rebecca, la première épouse de son mari, plane toujours.',
+    clicks: 0,
+    popularity: 91,
+    dateAdded: DateTime(2026, 2, 1),
+  ),
+  Book(
+    id: '39',
+    title: 'Candide',
+    author: 'Voltaire',
+    genre: 'Satire',
+    imagePath: 'assets/images/candide.jpg',
+    description:
+        'Candide traverse le monde et découvre que tout n\'est pas pour le mieux dans le meilleur des mondes possibles.',
+    clicks: 0,
+    popularity: 84,
+    dateAdded: DateTime(2026, 3, 1),
+  ),
+
 ];

@@ -4,44 +4,42 @@ import '../services/database_service.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   List<Book> _favorites = [];
+  final db = DatabaseService();
 
   List<Book> get favorites => _favorites;
 
   /// Charger les favoris depuis SQLite
-  Future<void> loadFavorites(List<Book> allBooks) async {
-    final dbService = DatabaseService();
-    List<String> validIds = await dbService.getFavorites();
-
-    // On filtre les livres dont l'ID est dans la base
-    _favorites = allBooks.where((book) => validIds.contains(book.id)).toList();
-
-    // Mettre à jour le compteur favorites
-    for (var book in allBooks) {
-      book.favorites = validIds.contains(book.id) ? 1 : 0;
-    }
-
+  Future<void> loadFavorites() async {
+    _favorites = await db.getFavorites();
     notifyListeners();
   }
 
-  /// Ajouter ou retirer un favori
+  /// Ajouter un favori
+  Future<void> addFavorite(Book book) async {
+    // Augmenter le compteur favorites
+    book.favorites += 1;
+    await db.addFavorite(book);
+    await loadFavorites();
+  }
+
+  /// Retirer un favori
+  Future<void> removeFavorite(String id) async {
+    await db.removeFavorite(id);
+    await loadFavorites();
+  }
+
+  /// Ajouter ou retirer un favori (toggle)
   Future<void> toggleFavorite(Book book) async {
-    final dbService = DatabaseService();
-
-    if (_favorites.contains(book)) {
-      _favorites.remove(book);
+    if (isFavorite(book.id)) {
+      await removeFavorite(book.id);
       book.favorites = (book.favorites - 1).clamp(0, 999999);
-      await dbService.removeFavorite(book.id);
     } else {
-      _favorites.add(book);
-      book.favorites += 1;
-      await dbService.addFavorite(book.id, book.title, book.genre);
+      await addFavorite(book);
     }
-
-    notifyListeners();
   }
 
   /// Savoir si un livre est en favori
-  bool isFavorite(Book book) {
-    return _favorites.contains(book);
+  bool isFavorite(String id) {
+    return _favorites.any((book) => book.id == id);
   }
 }

@@ -1,5 +1,5 @@
 class Book {
-  final String id;
+  final String id;             
   final String title;
   final String author;
   final String genre;
@@ -9,10 +9,10 @@ class Book {
   final int? popularity;
   final DateTime? dateAdded;
 
-  // --- Champs utilisés pour le système de recommandations ---
-  int clicks; // nombre de fois que le livre a été ouvert
-  int favorites; // nombre de fois ajouté aux favoris
-  double minutesRead; // temps passé à lire le livre
+  // --- Champs pour recommandations et historique ---
+  int clicks;
+  int favorites;
+  double minutesRead;
 
   Book({
     required this.id,
@@ -26,12 +26,41 @@ class Book {
     this.clicks = 0,
     this.favorites = 0,
     this.minutesRead = 0,
-    this.pageCount = 0,
   });
 
-  final int pageCount;
+  // --- Conversion pour SQLite ---
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'author': author,
+      'genre': genre,
+      'imagePath': imagePath,
+      'description': description,
+      'popularity': popularity,
+      'dateAdded': dateAdded?.toIso8601String(),
+      'clicks': clicks,
+      'favorites': favorites,
+      'minutesRead': minutesRead,
+    };
+  }
 
-  /// Score de recommandation automatique
+  factory Book.fromMap(Map<String, dynamic> map) {
+    return Book(
+      id: map['id'],
+      title: map['title'],
+      author: map['author'],
+      genre: map['genre'],
+      imagePath: map['imagePath'],
+      description: map['description'],
+      popularity: map['popularity'],
+      dateAdded: map['dateAdded'] != null ? DateTime.parse(map['dateAdded']) : null,
+      clicks: map['clicks'] ?? 0,
+      favorites: map['favorites'] ?? 0,
+      minutesRead: (map['minutesRead'] ?? 0).toDouble(),
+    );
+  }
+
   double get score {
     return (1.2 * clicks) + (2.5 * favorites) + (0.8 * minutesRead);
   }

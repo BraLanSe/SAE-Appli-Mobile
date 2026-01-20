@@ -1,66 +1,42 @@
 import 'package:flutter/material.dart';
-import 'user_profile_provider.dart';
 import '../models/book.dart';
-import '../utils/data.dart'; // Pour retrouver le livre entier par titre/id
 import '../services/database_service.dart';
 
 class HistoryProvider extends ChangeNotifier {
-  final UserProfileProvider userProfile;
-  final List<Book> _history = [];
+  List<Book> _history = [];
+  final db = DatabaseService();
 
-  HistoryProvider(this.userProfile);
-
-  List<Book> get history => List.unmodifiable(
-      _history); // Déjà trié par la requête SQL si on veut, ou on garde reversed ici si on push à la fin
+  List<Book> get history => List.unmodifiable(_history.reversed);
 
   Future<void> loadHistory() async {
-    final dbService = DatabaseService();
-    List<String> historyIds = await dbService
-        .getHistory(); // IDs triés par date décroissante (plus récent en premier)
-
-    _history.clear();
-    for (var id in historyIds) {
-      try {
-        final book = allBooks.firstWhere((b) => b.id == id,
-            orElse: () => Book(
-                  id: '0',
-                  title: 'Inconnu',
-                  author: 'Inconnu',
-                  genre: 'Inconnu',
-                  imagePath: '',
-                  description: '',
-                  clicks: 0,
-                  popularity: 0,
-                ));
-        if (book.imagePath.isNotEmpty) {
-          _history.add(book);
-        }
-      } catch (e) {
-        // Ignorer
-      }
-    }
+    _history = await db.getHistory();
     notifyListeners();
   }
 
   Future<void> addToHistory(Book book) async {
-    // Évite les doublons visuels immédiats, mais la DB gère aussi l'upsert
-    _history.removeWhere((b) => b.id == book.id);
-    _history.insert(
-        0, book); // Ajout au début car on a chargé par ordre décroissant
+    book.clicks += 1;
+    await db.addToHistory(book);
+    await loadHistory();
+  }
 
-    final dbService = DatabaseService();
-    await dbService.addToHistory(book.id, book.title, book.genre);
+  /// 🔥 AJOUT IMPORTANT
+  Future<void> updateBookTime(Book book, double minutesToAdd) async {
+    book.minutesRead += minutesToAdd;
+    await db.updateMinutesRead(book.id, book.minutesRead);
+    await loadHistory();
+  }
 
-    // Ajout d'XP pour la lecture
-    userProfile.addXp(20);
-
+  Future<void> removeFromHistory(String id) async {
+    final dbInstance = await db.database;
+    await dbInstance.delete('history', where: 'id = ?', whereArgs: [id]);
+    _history.removeWhere((b) => b.id == id);
     notifyListeners();
   }
 
   Future<void> clearHistory() async {
+    final dbInstance = await db.database;
+    await dbInstance.delete('history');
     _history.clear();
-    final dbService = DatabaseService();
-    await dbService.clearHistory();
     notifyListeners();
   }
 }

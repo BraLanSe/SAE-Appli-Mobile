@@ -1,9 +1,10 @@
-// lib/screens/recommendations_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/recommendation_service.dart';
 import '../utils/data.dart';
 import '../widgets/book_card.dart';
+import '../providers/favorites_provider.dart';
+import '../providers/history_provider.dart';
 
 class RecommendationsScreen extends StatefulWidget {
   const RecommendationsScreen({super.key});
@@ -23,12 +24,20 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final recommendedBooks = _recoService.recommend();
+    // 1. Récupérer les données utilisateur via les Providers
+    final favorites = Provider.of<FavoritesProvider>(context).favorites;
+    final history = Provider.of<HistoryProvider>(context).history;
+
+    // 2. Générer les recommandations
+    final recommendedBooks = _recoService.recommend(
+      favorites: favorites,
+      history: history,
+    );
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Recommandés pour vous"),
-        backgroundColor: Colors.deepPurple,
+        // backgroundColor: Colors.deepPurple, // Removed to use Theme
       ),
       body: recommendedBooks.isEmpty
           ? const Center(

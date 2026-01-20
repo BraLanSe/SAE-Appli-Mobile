@@ -1,165 +1,224 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../models/book.dart';
+import '../models/review.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
-  static Database? _database;
-
-  factory DatabaseService() {
-    return _instance;
-  }
-
+  factory DatabaseService() => _instance;
   DatabaseService._internal();
+
+  static Database? _database;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDatabase();
+    _database = await _initDB('bookwise.db');
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'bookwise.db');
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
+
     return await openDatabase(
       path,
-      version: 2, // Bump version to force recreate/upgrade
-      onCreate: _onCreate,
+      version: 2,
+      onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    await _createTables(db);
+  Future _createDB(Database db, int version) async {
+    // Table favoris
+    await db.execute('''
+      CREATE TABLE favorites (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        genre TEXT,
+        imagePath TEXT,
+        description TEXT,
+        popularity INTEGER,
+        dateAdded TEXT,
+        clicks INTEGER DEFAULT 0,
+        favorites INTEGER DEFAULT 0,
+        minutesRead REAL DEFAULT 0
+      )
+    ''');
+
+    // Table historique
+    await db.execute('''
+      CREATE TABLE history (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        genre TEXT,
+        imagePath TEXT,
+        description TEXT,
+        popularity INTEGER,
+        dateAdded TEXT,
+        clicks INTEGER DEFAULT 0,
+        favorites INTEGER DEFAULT 0,
+        minutesRead REAL DEFAULT 0
+      )
+    ''');
+
+    // Table reviews
+    await db.execute('''
+      CREATE TABLE reviews (
+        bookId TEXT PRIMARY KEY,
+        rating REAL NOT NULL,
+        pacing TEXT NOT NULL,
+        likedEnding INTEGER NOT NULL,
+        comment TEXT,
+        date TEXT NOT NULL
+      )
+    ''');
+
+    // Créer les index pour optimiser les performances
+    await _createIndexes(db);
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  /// Méthode de migration pour passer de v1 à v2
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Simple migration: Drop and recreate (ok for dev/student project)
-      // In production, we would use ALTER TABLE
-      await db.execute('DROP TABLE IF EXISTS favorites');
-      await db.execute('DROP TABLE IF EXISTS history');
-      await _createTables(db);
+      // Ajouter les index sur la base existante
+      await _createIndexes(db);
     }
   }
 
-  Future<void> _createTables(Database db) async {
-    // Table pour les favoris
-    await db.execute('''
-      CREATE TABLE favorites(
-        book_id TEXT PRIMARY KEY,
-        title TEXT,
-        genre TEXT,
-        added_at INTEGER
-      )
-    ''');
+  /// Créer les index pour optimiser les requêtes
+  Future _createIndexes(Database db) async {
+    // Index pour optimiser le tri de l'historique par date (DESC pour ORDER BY DESC)
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_history_date ON history(dateAdded DESC)'
+    );
 
-    // Table pour l'historique
-    await db.execute('''
-      CREATE TABLE history(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        book_id TEXT,
-        title TEXT,
-        genre TEXT,
-        read_at INTEGER,
-        UNIQUE(book_id)
-      )
-    ''');
-  }
+    // Index pour optimiser la récupération des favoris par date
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_favorites_date ON favorites(dateAdded)'
+    );
 
-  // --- Analysis ---
-
-  /// Retourne les 3 genres les plus fréquents combinés (History + Favorites)
-  Future<List<String>> getPreferredGenres() async {
-    final db = await database;
-
-    // On fait une UNION ALL pour combiner les deux tables
-    // PUIS un GROUP BY et COUNT
-    /*
-      SELECT genre, COUNT(*) as count 
-      FROM (
-        SELECT genre FROM favorites
-        UNION ALL
-        SELECT genre FROM history
-      ) 
-      WHERE genre IS NOT NULL AND genre != ''
-      GROUP BY genre 
-      ORDER BY count DESC 
-      LIMIT 3
-    */
-
-    final List<Map<String, dynamic>> result = await db.rawQuery('''
-      SELECT genre, COUNT(*) as count 
-      FROM (
-        SELECT genre FROM favorites
-        UNION ALL
-        SELECT genre FROM history
-      ) 
-      WHERE genre IS NOT NULL AND genre != ''
-      GROUP BY genre 
-      ORDER BY count DESC 
-      LIMIT 3
-    ''');
-
-    return result.map((row) => row['genre'] as String).toList();
+    // Index pour filtrer les reviews par note
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating)'
+    );
   }
 
   // --- Favoris ---
-
-  Future<void> addFavorite(String bookId, String title, String genre) async {
+  Future<void> addFavorite(Book book) async {
     final db = await database;
-    await db.insert(
-      'favorites',
-      {
-        'book_id': bookId,
-        'title': title,
-        'genre': genre, // Added
-        'added_at': DateTime.now().millisecondsSinceEpoch,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('favorites', book.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> removeFavorite(String bookId) async {
+  Future<void> removeFavorite(String id) async {
     final db = await database;
-    await db.delete(
-      'favorites',
-      where: 'book_id = ?',
-      whereArgs: [bookId],
-    );
+    await db.delete('favorites', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<List<String>> getFavorites() async {
+  Future<List<Book>> getFavorites() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('favorites');
-    return List.generate(maps.length, (i) => maps[i]['book_id'] as String);
+    final maps = await db.query('favorites');
+    return maps.map((map) => Book.fromMap(map)).toList();
   }
 
   // --- Historique ---
-
-  Future<void> addToHistory(String bookId, String title, String genre) async {
+  Future<void> addToHistory(Book book) async {
     final db = await database;
-    await db.insert(
+    await db.insert('history', book.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Book>> getHistory() async {
+    final db = await database;
+    final maps = await db.query('history', orderBy: 'dateAdded DESC');
+    return maps.map((map) => Book.fromMap(map)).toList();
+  }
+
+  /// Mettre à jour le temps de lecture
+  Future<void> updateMinutesRead(String id, double minutes) async {
+    final db = await database;
+    await db.update(
       'history',
-      {
-        'book_id': bookId,
-        'title': title,
-        'genre': genre, // Added
-        'read_at': DateTime.now().millisecondsSinceEpoch,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      {'minutesRead': minutes},
+      where: 'id = ?',
+      whereArgs: [id],
     );
   }
 
-  Future<List<String>> getHistory() async {
+  // --- Reviews ---
+  Future<int> saveReview(Review review) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'history',
-      orderBy: 'read_at DESC', // Plus récents d'abord
-    );
-    return List.generate(maps.length, (i) => maps[i]['book_id'] as String);
+    return await db.insert('reviews', review.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> clearHistory() async {
+  Future<Review?> getReview(String bookId) async {
     final db = await database;
-    await db.delete('history');
+    final maps = await db.query('reviews', where: 'bookId = ?', whereArgs: [bookId]);
+    if (maps.isNotEmpty) {
+      return Review.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  /// Récupérer tous les avis
+  Future<List<Review>> getAllReviews() async {
+    final db = await database;
+    final maps = await db.query('reviews', orderBy: 'date DESC');
+    return maps.map((map) => Review.fromMap(map)).toList();
+  }
+
+  /// Récupérer les avis avec une note minimale
+  Future<List<Review>> getReviewsByRating(double minRating) async {
+    final db = await database;
+    final maps = await db.query(
+      'reviews',
+      where: 'rating >= ?',
+      whereArgs: [minRating],
+      orderBy: 'rating DESC',
+    );
+    return maps.map((map) => Review.fromMap(map)).toList();
+  }
+
+  // --- Méthodes utilitaires ---
+  
+  /// Vérifier si un livre est dans les favoris
+  Future<bool> isFavorite(String bookId) async {
+    final db = await database;
+    final result = await db.query(
+      'favorites',
+      where: 'id = ?',
+      whereArgs: [bookId],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
+
+  /// Vérifier si un livre est dans l'historique
+  Future<bool> isInHistory(String bookId) async {
+    final db = await database;
+    final result = await db.query(
+      'history',
+      where: 'id = ?',
+      whereArgs: [bookId],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
+
+  /// Obtenir le nombre total de favoris
+  Future<int> getFavoritesCount() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM favorites');
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  /// Obtenir le nombre total d'avis
+  Future<int> getReviewsCount() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM reviews');
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 }

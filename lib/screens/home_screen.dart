@@ -1,223 +1,285 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../models/book.dart';
 import 'package:provider/provider.dart';
-// import '../providers/history_provider.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'dart:math';
 
-import '../utils/data.dart';
-// import '../screens/book_detail_screen.dart'; // No longer needed
-// import '../widgets/fade_in_animation.dart'; // No longer needed directly here
-import '../providers/filter_provider.dart';
-import '../services/recommendation_engine.dart';
-import '../models/recommendation_result.dart';
-import 'main_screen.dart';
-import 'profile_screen.dart';
-import 'statistics_screen.dart';
-
-// Import new widgets
-import '../widgets/home/featured_book_banner.dart';
-import '../widgets/home/category_filter_list.dart';
-import '../widgets/home/recommended_carousel.dart';
-import '../widgets/home/trending_book_list.dart';
+import '../widgets/book_card.dart';
+import 'favorites_screen.dart';
+import 'history_screen.dart';
+import 'recommended_screen.dart';
+import 'stats_screen.dart';
+import '../providers/books_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Determine greeting based on time
-    final hour = DateTime.now().hour;
-    final greeting = hour < 12
-        ? "Bonjour"
-        : hour < 18
-            ? "Bonne après-midi"
-            : "Bonsoir";
-
-    // Data simulation
-    final Book featuredBook = allBooks.isNotEmpty ? allBooks.last : allBooks[0];
-
-    // Get real data from providers
-    // final historyProvider = Provider.of<HistoryProvider>(context); // Unused
-    // final favoritesProvider = Provider.of<FavoritesProvider>(context); // Unused
-
-    // Recent books remains as is (or could be trending)
-    final List<Book> recentBooks = allBooks.skip(5).take(5).toList();
-
-    // Stats
-    // final historyCount = historyProvider.history.length; // Unused
-
+    // Access the provider logic
+    final booksProvider = Provider.of<BooksProvider>(context);
     final theme = Theme.of(context);
-    // final isDarkMode = theme.brightness == Brightness.dark; // Unused here now
+
+    // Slogans aléatoires pour le marketing
+    final slogans = [
+      "Prêt pour l'aventure ?",
+      "Votre prochaine évasion commence ici.",
+      "Explorez des mondes infinis.",
+      "Lisez, rêvez, vivez.",
+    ];
+    final randomSlogan = slogans[Random().nextInt(slogans.length)];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "BookWise",
-          style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
-        ),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              );
-            },
-            icon: const Icon(Icons.person_rounded),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Greeting & Stats Row
+            // --- HEADER MAGNIFIQUE ---
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        greeting,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        "Amateur de livres",
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const StatisticsScreen()),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Bonjour, Lecteur",
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            randomSlogan,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ],
                       ),
-                      child: Row(
+                      // Actions rapides (Icônes)
+                      Row(
                         children: [
-                          const Icon(Icons.bar_chart_rounded,
-                              color: Colors.white, size: 20),
+                          _buildIconButton(context, Icons.bar_chart, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const StatsScreen()));
+                          }),
                           const SizedBox(width: 8),
-                          const Text(
-                            "Stats",
+                          _buildIconButton(context, Icons.history, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const HistoryScreen()));
+                          }),
+                          const SizedBox(width: 8),
+                          _buildIconButton(context, Icons.favorite, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const FavoritesScreen()));
+                          }),
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Search Bar Flottante
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Rechercher...",
+                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        prefixIcon:
+                            Icon(Icons.search, color: theme.primaryColor),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                      ),
+                      onChanged: (value) => booksProvider.setSearchQuery(value),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // --- RECOMMANDATION BUTTON ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF4834D4)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6C63FF).withValues(alpha: 0.4),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const RecommendationsScreen()));
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.auto_awesome, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            "Recommandations sur mesure",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-
-            // Featured Book Banner
-            FeaturedBookBanner(featuredBook: featuredBook),
-
-            const SizedBox(height: 24),
-
-            // Quick Categories
-            const CategoryFilterList(),
-
-            const SizedBox(height: 24),
-
-            // Recommended Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Recommandé",
-                    style: GoogleFonts.playfairDisplay(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Provider.of<FilterProvider>(context, listen: false)
-                          .setGenre("All");
-                      MainScreen.switchToTab(context, 1);
-                    },
-                    child: const Text("Voir tout"),
-                  ),
-                ],
-              ),
-            ),
-
-            // Horizontal Carousel with FutureBuilder
-            FutureBuilder<List<RecommendationResult>>(
-              future: RecommendationEngine.compute(allBooks: allBooks),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    height: 320,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                } else if (snapshot.hasError) {
-                  return const SizedBox(
-                    height: 320,
-                    child: Center(child: Text("Erreur de chargement")),
-                  );
-                }
-
-                final results = snapshot.data ?? [];
-                return RecommendedCarousel(recommendedResults: results);
-              },
-            ),
-
-            // Trending Title
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-              child: Text(
-                "Tendances",
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
 
-            // Vertical list snippet
-            TrendingBookList(books: recentBooks),
+            const SizedBox(height: 14),
 
-            const SizedBox(height: 80), // Space for bottom nav
+            // --- CATEGORIES (CHIPS) ---
+            SizedBox(
+              height: 50,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                children: booksProvider.genres.map((genre) {
+                  final isSelected = booksProvider.selectedGenre == genre;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: FilterChip(
+                        label: Text(genre),
+                        selected: isSelected,
+                        onSelected: (_) => booksProvider.setGenre(genre),
+                        backgroundColor: theme.cardColor,
+                        selectedColor: theme.primaryColor,
+                        labelStyle: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : theme.textTheme.bodyMedium?.color,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.all(8),
+                        side: BorderSide.none,
+                        elevation: isSelected ? 4 : 0,
+                        shadowColor: theme.primaryColor.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // --- LISTE ANIMÉE ---
+            Expanded(
+              child: booksProvider.filteredBooks.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off,
+                              size: 64, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text("Aucun livre trouvé",
+                              style: theme.textTheme.titleMedium),
+                        ],
+                      ),
+                    )
+                  : AnimationLimiter(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: booksProvider.filteredBooks.length,
+                        itemBuilder: (context, index) {
+                          final book = booksProvider.filteredBooks[index];
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: BookCard(book: book, heroTag: book.id),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildIconButton(
+      BuildContext context, IconData icon, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 20),
+        onPressed: onTap,
+        color: Theme.of(context).textTheme.bodyMedium?.color,
+        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       ),
     );
   }
