@@ -1,94 +1,182 @@
-# BookWise (Livrable 1)
-# Bookwise
+# BookWise
 
-Bookwise est une application mobile Flutter pour gérer, consulter et suivre vos livres préférés. Elle propose des fonctionnalités de recommandation, un historique de lecture et la gestion de favoris. L'application est multi-plateformes (Android, iOS, Web, Windows, macOS, Linux).
+Application mobile de recommandation de livres  
+SAÉ 5.01 – Développement avancé
 
----
 
-## Fonctionnalités
 
-* **Accueil** : Page principale présentant les livres et catégories.
-* **Détails d'un livre** : Informations complètes sur chaque livre.
-* **Recommandations** : Suggestions basées sur les préférences de l'utilisateur.
-* **Favoris** : Ajouter et consulter les livres favoris.
-* **Historique** : Suivi des livres consultés ou lus.
-* **Multi-plateformes** : Android, iOS, Web, Windows, macOS et Linux.
-* **Gestion des assets** : Couvertures de livres et icônes.
+## Présentation du projet
 
----
+BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
+Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
 
-## Arborescence du projet
+Contrairement à de nombreuses applications existantes, BookWise :
+
+* ne nécessite aucun compte utilisateur,
+
+* fonctionne entièrement en local,
+
+* ne collecte aucune donnée personnelle externe.
+
+
+
+## Objectifs
+
+* Aider l’utilisateur à trouver des livres adaptés à ses goûts
+
+* Proposer une expérience de lecture simple, fluide et personnalisée
+
+* Mettre en avant la confidentialité et l’autonomie de l’utilisateur
+
+* Exploiter les habitudes de lecture pour améliorer les recommandations
+
+
+
+## Fonctionnalités principales
+🏠 Page de bienvenue
+
+* Affichage du logo et du slogan
+
+* Accès à l’application via un bouton de démarrage
+
+📖 Catalogue de livres (page d’accueil)
+
+* Liste complète des livres disponibles
+
+* Barre de recherche (par titre ou auteur)
+
+* Filtres par genres :
+
+  * Romantique
+
+  * Science-fiction
+
+  * Policier
+
+etc.
+
+⭐ Page de recommandations
+
+* Suggestions personnalisées basées sur :
+
+  * les livres que tu as favoris
+ 
+  * les livres que tu as lus (historique)
+
+  * les genres que tu aimes
+
+  * les auteurs que tu préfères
+
+  * les mots-clés dans les descriptions
+
+❤️ Favoris
+
+* Ajout et suppression de livres favoris
+
+* Accès rapide aux coups de cœur de l’utilisateur
+
+🕘 Historique de lecture
+
+* Suivi des livres consultés
+
+* Utilisé pour affiner les recommandations
+
+📊 Statistiques de lecture
+
+* Montre combien de livres tu as consultés
+
+* Montre combien de livres tu as mis en favoris
+
+* Montre le temps total que tu as passé à lire
+
+* Montre le temps moyen de lecture par livre
+
+* Indique ton genre préféré
+
+* Montre le total de livres que tu as explorés
+
+* Affiche les genres que tu as lus
+
+* Affiche un top 3 des genres avec le nombre de livres
+
+
+
+## Structure du projet
+```
+lib/
+├── models/        # Modèles de données (Book, etc.)
+├── providers/     # Gestion de l’état (Provider)
+├── screens/       # Écrans de l’application
+├── services/      # Accès aux données et logique métier
+├── utils/         # Fonctions utilitaires
+└── widgets/       # Widgets réutilisables
 
 ```
 
-├── android/         # Code et configurations Android
-├── ios/             # Code et configurations iOS
-├── lib/             # Code Dart principal
-│   ├── models/      # Modèles de données
-│   ├── providers/   # Providers pour gestion d'état
-│   ├── screens/     # Écrans de l'application
-│   ├── services/    # Services, par ex. recommandations
-│   ├── utils/       # Fonctions utilitaires
-│   └── widgets/     # Widgets réutilisables
-├── assets/          # Images et autres ressources
-├── web/             # Configuration et assets Web
-├── windows/         # Configuration Windows
-├── macos/           # Configuration macOS
-├── linux/           # Configuration Linux
-└── test/            # Tests unitaires et widgets
-```
+## Technologies utilisées
 
----
+* Flutter (Dart)
 
-## Installation
+* SQLite (stockage local)
 
-1. **Cloner le dépôt :**
+* Provider (gestion d’état)
 
-```bash
-git clone https://github.com/BraLanSe/SAE-Appli-Mobile.git
-cd SAE-Appli-Mobile
-```
-
-2. **Installer les dépendances Flutter :**
-
-```bash
-flutter pub get
-```
-
-3. **Exécuter l'application :**
-
-* Sur mobile Android :
-
-```bash
-flutter run
-```
-4. **Pour construire une version release :**
-
-```bash
-flutter build apk       # Android
-flutter build ios       # iOS
-flutter build web       # Web
-flutter build windows   # Windows
-flutter build macos     # macOS
-flutter build linux     # Linux
-```
-
----
-
-## Dépendances principales
-
-* Flutter SDK
-* `provider` pour la gestion d'état
-* `shared_preferences` pour le stockage léger
-* `fl_chart` pour les graphiques (si nécessaire)
-* `google_fonts` pour les polices
-
----
+* Git / GitHub
 
 
-👤 Auteur
 
-Projet réalisé par Tassadit, Bradley, Hocine, Hichem, Yacine, Mohamad, Anouar
+## Installation et exécution
+
+Prérequis
+
+* Flutter installé
+
+* Android Studio ou VS Code
+
+* Émulateur ou appareil Android
 
 
-BUT 3 INFO
+
+## Lancer le projet
+
+* flutter pub get
+* flutter run
+
+
+
+## Axes d’amélioration
+
+* Amélioration de l’interface graphique
+
+* Ajout de notifications de recommandations
+
+* Enrichissement de la base de données de livres
+
+
+
+## Équipe
+
+Groupe MakeMake :
+
+* Tassadit Ouzia
+
+* Bradley Landim
+
+* Anouar Rouibi
+
+* Hocine Zared
+
+* Hichem Zenaini
+
+* Mohammed Essaoudi
+
+* Yacine Sellaoui
+
+
+## Contexte universitaire
+
+Projet réalisé dans le cadre de la
+SAÉ 5.01 – Développement avancé
+
+
+
