@@ -1,182 +1,85 @@
-# BookWise
+# 📚 BookWise
 
-Application mobile de recommandation de livres  
-SAÉ 5.01 – Développement avancé
-
+> **Application mobile de recommandation de livres**
 
 
-## Présentation du projet
+## Présentation
 
-BookWise est une application mobile développée dans le cadre de la SAÉ 5.01 – Développement avancé.
-Elle a pour objectif de proposer des recommandations de livres personnalisées en fonction des goûts et des habitudes de lecture de l’utilisateur, tout en garantissant une confidentialité totale.
+**BookWise** est une application mobile développée en Flutter. Son objectif principal est d'offrir des recommandations de livres personnalisées basées sur les goûts et habitudes de lecture de l'utilisateur.
 
-Contrairement à de nombreuses applications existantes, BookWise :
+* ❌ **Aucun compte utilisateur** n'est nécessaire.
+* 🔒 Fonctionne **entièrement en local**.
 
-* ne nécessite aucun compte utilisateur,
+##  Fonctionnalités Principales
 
-* fonctionne entièrement en local,
+* **Catalogue complet :** Accès à une large bibliothèque de livres.
+* **Recherche avancée :** Recherche par titre ou par auteur.
+* **Filtrage intelligent :** Tri des livres par genres (Romantique, Science-fiction, Policier, etc.).
 
-* ne collecte aucune donnée personnelle externe.
+###  Moteur de Recommandation
+Suggestions sur mesure calculées localement en fonction de :
+* Vos **favoris**.
+* Votre **historique** de lecture.
+* Vos **auteurs et genres** préférés.
+* L'analyse des **mots-clés** descriptifs.
 
+###  Statistiques de Lecture (Dashboard)
+Suivez vos habitudes avec précision :
+* Nombre total de livres consultés et explorés.
+* Nombre de livres en favoris.
+* Temps total passé à lire.
+* Temps moyen de lecture par livre.
+* Classement de vos genres préférés.
 
+---
 
-## Objectifs
+##  Stack Technique
 
-* Aider l’utilisateur à trouver des livres adaptés à ses goûts
-
-* Proposer une expérience de lecture simple, fluide et personnalisée
-
-* Mettre en avant la confidentialité et l’autonomie de l’utilisateur
-
-* Exploiter les habitudes de lecture pour améliorer les recommandations
-
-
-
-## Fonctionnalités principales
-🏠 Page de bienvenue
-
-* Affichage du logo et du slogan
-
-* Accès à l’application via un bouton de démarrage
-
-📖 Catalogue de livres (page d’accueil)
-
-* Liste complète des livres disponibles
-
-* Barre de recherche (par titre ou auteur)
-
-* Filtres par genres :
-
-  * Romantique
-
-  * Science-fiction
-
-  * Policier
-
-etc.
-
-⭐ Page de recommandations
-
-* Suggestions personnalisées basées sur :
-
-  * les livres que tu as favoris
- 
-  * les livres que tu as lus (historique)
-
-  * les genres que tu aimes
-
-  * les auteurs que tu préfères
-
-  * les mots-clés dans les descriptions
-
-❤️ Favoris
-
-* Ajout et suppression de livres favoris
-
-* Accès rapide aux coups de cœur de l’utilisateur
-
-🕘 Historique de lecture
-
-* Suivi des livres consultés
-
-* Utilisé pour affiner les recommandations
-
-📊 Statistiques de lecture
-
-* Montre combien de livres tu as consultés
-
-* Montre combien de livres tu as mis en favoris
-
-* Montre le temps total que tu as passé à lire
-
-* Montre le temps moyen de lecture par livre
-
-* Indique ton genre préféré
-
-* Montre le total de livres que tu as explorés
-
-* Affiche les genres que tu as lus
-
-* Affiche un top 3 des genres avec le nombre de livres
+| Catégorie | Technologie | Rôle / Usage |
+| :--- | :--- | :--- |
+| **Framework Mobile** | ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white) | Développement de l'interface utilisateur multiplateforme (Dart). |
+| **Langage** | ![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=dart&logoColor=white) | Logique métier et algorithmes de recommandation. |
+| **Gestion d'état** | **Provider** | Gestion réactive des données (favoris, historique, thème). |
+| **Base de données** | **SQLite** | Stockage local et persistant des données (sans serveur). |
 
 
+---
 
-## Structure du projet
-```
+##  Structure du Projet
+
+```text
 lib/
-├── models/        # Modèles de données (Book, etc.)
-├── providers/     # Gestion de l’état (Provider)
-├── screens/       # Écrans de l’application
-├── services/      # Accès aux données et logique métier
-├── utils/         # Fonctions utilitaires
-└── widgets/       # Widgets réutilisables
-
+├── models/          # Définition des modèles de données (Book, Review, etc.)
+├── providers/       # Gestionnaires d'état (Logique de l'application)
+├── screens/         # Les différentes interfaces (Vues)
+├── services/        # Logique métier et algorithmes
+└── widgets/         # Composants graphiques réutilisables (BookCard, etc.)
 ```
+## Installation et Lancement
 
-## Technologies utilisées
+Suivez ces étapes pour exécuter le projet sur votre machine locale.
 
-* Flutter (Dart)
+### Prérequis
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) installé .
+* Un émulateur Android/iOS ou un appareil physique connecté.
 
-* SQLite (stockage local)
+### Étapes
 
-* Provider (gestion d’état)
+1.  **Récupérer le projet :**
+    ```bash
+    # Clonez ce dépôt 
+    git clone https://github.com/BraLanSe/SAE-Appli-Mobile.git
+    cd SAE-Appli-Mobile
+    ```
 
-* Git / GitHub
+2.  **Installer les dépendances :**
+    ```bash
+    flutter pub get
+    ```
 
-
-
-## Installation et exécution
-
-Prérequis
-
-* Flutter installé
-
-* Android Studio ou VS Code
-
-* Émulateur ou appareil Android
-
-
-
-## Lancer le projet
-
-* flutter pub get
-* flutter run
-
-
-
-## Axes d’amélioration
-
-* Amélioration de l’interface graphique
-
-* Ajout de notifications de recommandations
-
-* Enrichissement de la base de données de livres
-
-
-
-## Équipe
-
-Groupe MakeMake :
-
-* Tassadit Ouzia
-
-* Bradley Landim
-
-* Anouar Rouibi
-
-* Hocine Zared
-
-* Hichem Zenaini
-
-* Mohammed Essaoudi
-
-* Yacine Sellaoui
-
-
-## Contexte universitaire
-
-Projet réalisé dans le cadre de la
-SAÉ 5.01 – Développement avancé
-
-
-
+3.  **Lancer l'application :**
+    ```bash
+    flutter run
+    ```
+    ---
+*Ce projet a été réalisé dans le cadre de la SAÉ BUT3 INFO : Tassadit Ouzia, Bradley Landim, Anouar Rouibi, Hocine Zared, Hichem Zenaini, Mohammed Essaoudi et Yacine Sellaoui.*
